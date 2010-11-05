@@ -9,6 +9,11 @@
 #include <windows.h>
 
 
+using boost::asio::ip::tcp;
+
+typedef boost::shared_ptr<tcp::socket> socket_ptr;
+
+
 inline void progressiveWait(boost::function<bool ()> condition, unsigned long start, unsigned long max, float step = 2)
 {
 	unsigned long interval = start;

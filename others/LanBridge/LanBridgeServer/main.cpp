@@ -1,4 +1,8 @@
 
+#pragma warning(disable:4267)
+
+#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
+
 #include <cstdlib>
 #include <string>
 #include <set>
@@ -109,16 +113,16 @@ void writeResponse(const std::string& request, const char* buffer, size_t length
 }
 
 
-void session_output(tcp::socket& sock, const std::string& request)
+void session_output(socket_ptr sock, const std::string& request)
 {
 	try
 	{
 		unsigned long interval = 500;
-		while(sock.is_open())
+		while(sock->is_open())
 		{
 			char reply[max_length];
 			boost::system::error_code error;
-			size_t reply_length = sock.read_some(boost::asio::buffer(reply, max_length), error);
+			size_t reply_length = sock->read_some(boost::asio::buffer(reply, max_length), error);
 			if(error == boost::asio::error::eof || reply_length == 0)
 			{
 				{
@@ -163,8 +167,8 @@ void session_output(tcp::socket& sock, const std::string& request)
 
 		try
 		{
-			if(sock.is_open())
-				sock.close();
+			if(sock->is_open())
+				sock->close();
 		}
 		catch(...)
 		{
@@ -182,7 +186,7 @@ void session(boost::asio::io_service& io_service, const std::string& request)
 {
 	try
 	{
-		tcp::socket sock(io_service);
+		socket_ptr sock(new tcp::socket(io_service));
 
 		boost::scoped_ptr<boost::thread> outputthread;
 
@@ -239,7 +243,7 @@ void session(boost::asio::io_service& io_service, const std::string& request)
 			}
 
 			const std::string command = parseCommand(&(request_buffer.front()));
-			if(command.empty() && !sock.is_open())
+			if(command.empty() && !sock->is_open())
 			{
 				boost::mutex::scoped_lock lock(s_LogMutex);
 
@@ -248,7 +252,7 @@ void session(boost::asio::io_service& io_service, const std::string& request)
 				break;
 			}
 
-			if(!sock.is_open())
+			if(!sock->is_open())
 			{
 				std::string host, port;
 				parseHost(&(request_buffer.front()), host, port);
@@ -260,8 +264,8 @@ void session(boost::asio::io_service& io_service, const std::string& request)
 				{
 					try
 					{
-						sock.connect(*iterator);
-						assert(sock.is_open());
+						sock->connect(*iterator);
+						assert(sock->is_open());
 
 						{
 							boost::mutex::scoped_lock lock(s_LogMutex);
@@ -290,15 +294,15 @@ void session(boost::asio::io_service& io_service, const std::string& request)
 			}
 			else
 			{
-				boost::asio::write(sock, boost::asio::buffer(&(request_buffer.front()), request_buffer.size()));
+				boost::asio::write(*sock, boost::asio::buffer(&(request_buffer.front()), request_buffer.size()));
 
 				if(!outputthread)
 					outputthread.reset(new boost::thread(bind(&session_output, boost::ref(sock), request)));
 			}
 		}
 
-		if(sock.is_open())
-			sock.close();
+		if(sock->is_open())
+			sock->close();
 
 		// remove request in g_ActiveRequests
 		{
@@ -342,6 +346,11 @@ int main(int argc, char* argv[])
 		g_RequestsDir = station + "\\requests\\";
 		g_ReponsesDir = station + "\\responses\\";
 		unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : 400;
+
+		if(!boost::filesystem::exists(g_RequestsDir))
+			boost::filesystem::create_directories(g_RequestsDir);
+		if(!boost::filesystem::exists(g_ReponsesDir))
+			boost::filesystem::create_directories(g_ReponsesDir);
 
 		boost::asio::io_service io_service;
 
