@@ -1,0 +1,18 @@
+
+
+2010.11.5	K.L.	<xxxK.L.xxx@gmail.com>
+
+	*	bootstrapper.lua:
+			while true do
+				local s, e = pcall(os.execute, "LanBridgeServer --station=X:\\bridge")
+				if not s then
+					print("Bootstrpper: error: " .. e)
+				end
+
+				print"\n *** restart... ***"
+			end
+
+	+	Changlog.txt: created.
+
+
+------------------------------------------------------- LanBridge ChangeLog -------------------------------------------------------
