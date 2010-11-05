@@ -1,6 +1,14 @@
 
+TODO:
+	log stream with mutex lock
+	refine log format by 'request_name' on the head.
+	LanBridgeServer: DNS map
+
+
 
 2010.11.5	K.L.	<xxxK.L.xxx@gmail.com>
+
+	>	LanBridgeServer: fixed bug of sock corruption in thread 'session_output'.
 
 	*	bootstrapper.lua:
 			while true do

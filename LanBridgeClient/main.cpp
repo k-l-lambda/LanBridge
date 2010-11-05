@@ -1,4 +1,9 @@
 
+#pragma warning(disable:4267)
+
+#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
+
+
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
@@ -18,11 +23,7 @@
 #include "..\include\Common.h"
 
 
-using boost::asio::ip::tcp;
-
 static const size_t max_length = 0x2000;
-
-typedef boost::shared_ptr<tcp::socket> socket_ptr;
 
 static boost::mutex s_LogMutex;
 
@@ -221,6 +222,11 @@ int main(int argc, char* argv[])
 		g_ReponsesDir = station + "\\responses\\";
 		if(vm.count("interval"))
 			g_Interval = vm["interval"].as<unsigned long>();
+
+		if(!boost::filesystem::exists(g_RequestsDir))
+			boost::filesystem::create_directories(g_RequestsDir);
+		if(!boost::filesystem::exists(g_ReponsesDir))
+			boost::filesystem::create_directories(g_ReponsesDir);
 
 		if(vm.count("localid"))
 			s_LocalId = vm["localid"].as<std::string>();
