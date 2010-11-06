@@ -6,6 +6,11 @@ TODO:
 
 
 
+2010.11.6	K.L.	<xxxK.L.xxx@gmail.com>
+
+	>	LanBridgeServer: ipv6 support added.
+
+
 2010.11.5	K.L.	<xxxK.L.xxx@gmail.com>
 
 	>	LanBridgeServer: fixed bug of sock corruption in thread 'session_output'.

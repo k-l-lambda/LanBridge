@@ -258,9 +258,27 @@ void session(boost::asio::io_service& io_service, const std::string& request)
 				parseHost(&(request_buffer.front()), host, port);
 
 				tcp::resolver resolver(io_service);
-				tcp::resolver::query query(tcp::v4(), host, port);
+				boost::scoped_ptr<tcp::resolver::query> query;
+				tcp::resolver::iterator iterator;
 
-				for(tcp::resolver::iterator iterator = resolver.resolve(query); iterator != tcp::resolver::iterator(); ++iterator)
+				try
+				{
+					query.reset(new tcp::resolver::query(tcp::v4(), host, port));
+					iterator = resolver.resolve(*query);
+				}
+				catch(const boost::system::system_error& e)
+				{
+					if(e.code().value() == boost::asio::error::host_not_found)
+					{
+						// try again with ipv6
+						query.reset(new tcp::resolver::query(tcp::v6(), host, port));
+						iterator = resolver.resolve(*query);
+					}
+					else
+						throw e;
+				}
+
+				for(; iterator != tcp::resolver::iterator(); ++iterator)
 				{
 					try
 					{
