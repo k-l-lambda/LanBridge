@@ -1,10 +1,12 @@
 
 TODO:
-	LanBridgeServer: DNS map
+	LanBridgeMessenger: system command, password.
 
 
 
 2010.11.16	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	LanBridgeServer: host map added.
 
 	+	include/Log.h: created.
 

@@ -43,6 +43,35 @@ static boost::mutex s_LogMutex;
 
 boost::scoped_ptr<Bridge>	g_Bridge;
 
+std::map<std::string, std::string>		g_HostMap;
+
+
+void loadHostMap()
+{
+	std::ifstream file("hosts");
+	if(file.is_open())
+	{
+		g_HostMap.clear();
+
+		while(!file.eof())
+		{
+			char line[0x100];
+			file.getline(line, 0x100);
+
+			const std::string sline(line, 0x100);
+
+			boost::smatch what;
+			bool result = boost::regex_match(sline, what, boost::regex("(\\S+)\\s+(\\S+).*"));
+			if(result && what.size() >= 3)
+			{
+				g_HostMap.insert(std::make_pair(what[2].str(), what[1].str()));
+			}
+		}
+
+		Log::shell() << "host map loaded.";
+	}
+}
+
 
 std::string parseCommand(const std::string& request)
 {
@@ -56,7 +85,7 @@ std::string parseCommand(const std::string& request)
 	return "";
 }
 
-void parseHost(const std::string& request, std::string& host, std::string& port)
+void doParseHost(const std::string& request, std::string& host, std::string& port)
 {
 	boost::smatch what;
 	bool result = boost::regex_match(request, what, boost::regex("(\\w+)\\s+(\\S+)(\\s+.*)?"));
@@ -114,6 +143,13 @@ void parseHost(const std::string& request, std::string& host, std::string& port)
 	}
 	else
 		throw std::runtime_error("request parse failed: " + std::string(request));
+}
+
+void parseHost(const std::string& request, std::string& host, std::string& port)
+{
+	doParseHost(request, host, port);
+	if(g_HostMap.count(host))
+		host = g_HostMap[host];
 }
 
 
@@ -389,8 +425,10 @@ int main(int argc, char* argv[])
 		else
 			throw std::runtime_error("unknown catcher: " + catchertype);
 
-		g_Bridge.reset(new Bridge(pitcher, catcher, interval));
 
+		loadHostMap();
+
+		g_Bridge.reset(new Bridge(pitcher, catcher, interval));
 		g_Bridge->acceptConnections(boost::bind(session, boost::ref(io_service), _1));
 	}
 	catch (std::exception& e)
