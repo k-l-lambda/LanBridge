@@ -1,17 +1,24 @@
 
+#pragma warning(disable:4267)
+
+
 #include <string>
 #include <iostream>
 
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/bind.hpp>
+#include <boost/asio.hpp>
 
+#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
 #include <windows.h>
 
 
 using boost::asio::ip::tcp;
 
 typedef boost::shared_ptr<tcp::socket> socket_ptr;
+
+static const size_t s_PackLength = 0x2000;
 
 
 inline void progressiveWait(boost::function<bool ()> condition, unsigned long start, unsigned long max, float step = 2)
@@ -27,7 +34,7 @@ inline void progressiveWait(boost::function<bool ()> condition, unsigned long st
 }
 
 
-inline void writeToStation(const std::string& request, const char* buffer, size_t length, const std::string& dir, const char* ext)
+/*inline void writeToStation(const std::string& request, const char* buffer, size_t length, const std::string& dir, const char* ext)
 {
 	static boost::mutex s_Mutex;
 	boost::mutex::scoped_lock lock(s_Mutex);
@@ -46,4 +53,4 @@ inline void writeToStation(const std::string& request, const char* buffer, size_
 	progressiveWait(boost::bind((bool (*)(const boost::filesystem::path &))&boost::filesystem::exists, targetfilename), 100, 30000);
 
 	boost::filesystem::rename(filename, targetfilename);
-}
+}*/

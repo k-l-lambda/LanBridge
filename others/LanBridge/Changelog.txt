@@ -1,9 +1,35 @@
 
 TODO:
 	log stream with mutex lock
-	refine log format by 'request_name' on the head.
 	LanBridgeServer: DNS map
 
+
+
+2010.11.15	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	Catcher: 'new connection avoid' mark added.
+
+	+	VideoBridge: 16bit color encode/decode implemented.
+
+
+2010.11.12	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	VideoBridge: 16it color format added.
+
+	+	VideoBridge/VideoBridge::Catcher: video capture implemented.
+
+
+2010.11.11	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	LanBridgeMessenger: project setup.
+
+	+	VideoBridge: project setup.
+
+
+2010.11.10	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	UdpBridge: project setup.
+	+	FileSystemBridge: project setup.
 
 
 2010.11.6	K.L.	<xxxK.L.xxx@gmail.com>
