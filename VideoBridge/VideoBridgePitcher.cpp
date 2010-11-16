@@ -97,7 +97,7 @@ namespace VideoBridge
 			if(!::RegisterClass(&wndClass))
 				throw std::runtime_error("RegisterClass failed");
 
-			::DWORD style = WS_OVERLAPPEDWINDOW & (~WS_MAXIMIZEBOX) | WS_EX_TOPMOST;
+			::DWORD style = (WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST) & (~WS_MAXIMIZEBOX) & (~WS_THICKFRAME);
 				//WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_THICKFRAME|WS_MINIMIZEBOX|WS_VISIBLE
 				//(WS_OVERLAPPEDWINDOW & (~WS_MAXIMIZEBOX))
 
@@ -195,17 +195,6 @@ namespace VideoBridge
 				::HBITMAP bmpSource = ::CreateCompatibleBitmap(m_hDc, m_Width, m_Height);
 				{
 					size_t bodylines = (m_Data->size() + (m_Width * m_PixelSize) - 1) / (m_Width * m_PixelSize);
-
-					/*boost::shared_array<char> buffer(new char[m_Width * m_Height * 3]);
-					static size_t index = 0;
-					++index;
-					for(int y = 0; y < m_Height; ++ y)
-						for(int x = 0; x < m_Width; ++ x)
-						{
-							char* p = buffer.get() + (y * m_Width + x) * 3;
-							p[0] = p[1] = p[2] = 0;
-							p[(y + index) % 3] = x % 0x80 + 0x80;
-						}*/
 
 					::BITMAPINFO info;
 					info.bmiHeader.biSize = sizeof(::BITMAPINFOHEADER);

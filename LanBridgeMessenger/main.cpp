@@ -14,6 +14,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 
+#include "..\include\Log.h"
+
 #include "..\FileSystemBridge\FileSystemBridgePitcher.h"
 #include "..\FileSystemBridge\FileSystemBridgeCatcher.h"
 #pragma comment(lib, "FileSystemBridge.lib")
@@ -118,7 +120,7 @@ void server(po::variables_map& vm)
 			const size_t length = bridge->read(connection_id, data);
 			if(!length)
 			{
-				std::cout << "empty data, drop." << std::endl;
+				Log::shell(Log::Msg_Warning) << "empty data, drop.";
 				return;
 			}
 
@@ -128,9 +130,7 @@ void server(po::variables_map& vm)
 
 			if(command == "MESSAGE")
 			{
-				std::cout << "message recived from " << connection_id << ":" << std::endl;
-				std::cout.write(body, body_length);
-				std::cout << std::endl;
+				Log::shell(Log::Msg_Input) << "message recived from " << connection_id << ":" << std::string(body, body_length);
 			}
 			else if(command == "FILE")
 			{
@@ -138,7 +138,7 @@ void server(po::variables_map& vm)
 				body += filename.length() + 1;
 				body_length -= filename.length() + 1;
 
-				std::cout << "file \"" << filename << "\" recived from " << connection_id << "." << std::endl;
+				Log::shell(Log::Msg_Input) << "file \"" << filename << "\" recived from " << connection_id << ".";
 
 				size_t packs = 0;
 				{
@@ -163,14 +163,14 @@ void server(po::variables_map& vm)
 					}
 				}
 
-				std::cout << "file receive end, " << packs << " packs in total." << std::endl;
+				Log::shell() << "file receive end, " << packs << " packs in total.";
 			}
 			else
 				throw std::runtime_error("unknown command: " + command);
 		};
 	};
 
-	std::cout << "LanBridgeMessenger server starup." << std::endl;
+	Log::shell(Log::Msg_SetUp) << "LanBridgeMessenger server starup.";
 
 	Bridge bridge(pitcher, catcher);
 	bridge.acceptConnections(boost::bind(&_l::session, &bridge, _1));
@@ -238,7 +238,7 @@ void client(po::variables_map& vm)
 
 		bridge.write(genConnectionId(), data.data(), data.length());
 
-		std::cout << "message sent." << std::endl;
+		Log::shell() << "message sent.";
 	}
 	else if(vm.count("file"))
 	{
@@ -266,7 +266,7 @@ void client(po::variables_map& vm)
 			bridge.write(connection_id, header.data(), 0);
 
 
-			std::cout << "file sent, " << packs << " packs in total." << std::endl;
+			Log::shell() << "file sent, " << packs << " packs in total.";
 		}
 		else
 			throw std::runtime_error("cannot find file: " + filename);
@@ -308,11 +308,11 @@ int main(int argc, char* argv[])
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << "Exception: " << e.what() << std::endl;
+		Log::shell(Log::Msg_Fatal) << "Exception: " << e.what();
 	}
 	catch(...)
 	{
-		std::cerr << "Unknown exception." << std::endl;
+		Log::shell(Log::Msg_Fatal) << "Unknown exception.";
 	}
 
 	return 0;

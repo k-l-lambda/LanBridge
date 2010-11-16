@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#include "..\include\Log.h"
+
 
 namespace VideoBridge
 {
@@ -222,7 +224,7 @@ namespace VideoBridge
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << "Exception: " << e.what() << std::endl;
+			Log::shell(Log::Msg_Fatal) << "Exception: " << e.what();
 		}
 	}
 
@@ -354,7 +356,7 @@ namespace VideoBridge
 			::HBITMAP hbmp = ::CreateCompatibleBitmap(hdc, width, height);
 			if(!hbmp)
 			{
-				std::cerr << __FUNCTION__": CreateCompatibleBitmap failed, snapshot failed.";
+				Log::shell(Log::Msg_Warning) << __FUNCTION__": CreateCompatibleBitmap failed, snapshot failed.";
 				return Catcher::DataBufferPtr(new Catcher::DataBuffer);
 			}
 			::HBITMAP oldbitmap = (::HBITMAP)::SelectObject(hmemDC, hbmp);
@@ -457,7 +459,7 @@ namespace VideoBridge
 			m_DataRegion = fnFindDataRegion(snapshot(m_PixelSize), s_DesktopRect);
 
 			if(m_DataRegion)
-				std::cout << "data region rect found: (" << m_DataRegion->left << ", " << m_DataRegion->top << ")-(" << m_DataRegion->right << ", " << m_DataRegion->bottom << ")." << std::endl;
+				Log::shell(Log::Msg_Plus) << "data region rect found: (" << m_DataRegion->left << ", " << m_DataRegion->top << ")-(" << m_DataRegion->right << ", " << m_DataRegion->bottom << ").";
 		}
 
 		if(m_DataRegion)
@@ -467,7 +469,7 @@ namespace VideoBridge
 			{
 				if(getRectWidth(*subregion) != getRectWidth(*m_DataRegion) || getRectHeight(*subregion) != getRectHeight(*m_DataRegion))
 				{	// correct data resion and retry
-					std::cout << "sub data region dismatch: (" << subregion->left << ", " << subregion->top << ")-(" << subregion->right << ", " << subregion->bottom << "), retry capture." << std::endl;
+					Log::shell(Log::Msg_Remove) << "sub data region dismatch: (" << subregion->left << ", " << subregion->top << ")-(" << subregion->right << ", " << subregion->bottom << "), retry capture.";
 
 					m_DataRegion->left += subregion->left;
 					m_DataRegion->right = m_DataRegion->left + subregion->right;
@@ -498,11 +500,11 @@ namespace VideoBridge
 
 					if(datalen > (shot->size() - (p - &(shot->front()))))
 					{
-						std::cerr << __FUNCTION__": bad data length: " << datalen << std::endl;
+						Log::shell(Log::Msg_Warning) << __FUNCTION__": bad data length: " << datalen;
 						return DataBufferPtr();
 					}
 
-					std::cout << "a new frame \"" << frameid << "\" (" << datalen << " bytes) received." << std::endl;
+					//std::cout << "a new frame \"" << frameid << "\" (" << datalen << " bytes) received." << std::endl;
 
 					DataBufferPtr data(new DataBuffer(datalen));
 					if(datalen)
@@ -515,7 +517,7 @@ namespace VideoBridge
 			}
 			else
 			{
-				std::cout << "data region rect lost, retry capture." << std::endl;
+				Log::shell(Log::Msg_Remove) << "data region rect lost, retry capture.";
 
 				// discard data region and retry
 				m_DataRegion = boost::optional<::RECT>();
