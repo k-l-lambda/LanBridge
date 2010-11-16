@@ -18,6 +18,7 @@
 
 #include "..\include\Common.h"
 #include "..\include\Bridge.h"
+#include "..\include\Log.h"
 
 #include "..\FileSystemBridge\FileSystemBridgePitcher.h"
 #include "..\FileSystemBridge\FileSystemBridgeCatcher.h"
@@ -132,9 +133,9 @@ void session_output(socket_ptr sock, const std::string& connection_id)
 					boost::mutex::scoped_lock lock(s_LogMutex);
 
 					if(error == boost::asio::error::eof)
-						std::cout << "[" << connection_id << "]	EOF." << std::endl;
+						Log::shell(Log::Msg_Clew) << "[" << connection_id << "]	EOF.";
 					else if(reply_length == 0)
-						std::cout << "[" << connection_id << "]	0 byte replied." << std::endl;
+						Log::shell(Log::Msg_Clew) << "[" << connection_id << "]	0 byte replied.";
 				}
 
 				if(interval < 20000)
@@ -155,7 +156,7 @@ void session_output(socket_ptr sock, const std::string& connection_id)
 			{
 				boost::mutex::scoped_lock lock(s_LogMutex);
 
-				std::cout << "[" << connection_id << "]	reply: " << reply_length << " bytes received." << std::endl;
+				Log::shell(Log::Msg_Input) << "[" << connection_id << "]	reply: " << reply_length << " bytes received.";
 			}
 
 			//writeResponse(connection_id, reply, reply_length);
@@ -167,7 +168,7 @@ void session_output(socket_ptr sock, const std::string& connection_id)
 		{
 			boost::mutex::scoped_lock lock(s_LogMutex);
 
-			std::cerr << "[" << connection_id << "]	exception: " << e.what() << std::endl;
+			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
 		}
 
 		try
@@ -183,7 +184,7 @@ void session_output(socket_ptr sock, const std::string& connection_id)
 	{
 		boost::mutex::scoped_lock lock(s_LogMutex);
 
-		std::cerr << "[" << connection_id << "]	unknown exception." << std::endl;
+		Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	unknown exception.";
 	}
 }
 
@@ -207,7 +208,7 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 			{
 				boost::mutex::scoped_lock lock(s_LogMutex);
 
-				std::cout << "[" << connection_id << "]	0 byte request received, session end." << std::endl;
+				Log::shell(Log::Msg_Remove) << "[" << connection_id << "]	0 byte request received, session end.";
 
 				//throw std::runtime_error("request buffer is empty.");
 				break;
@@ -219,7 +220,7 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 			{
 				boost::mutex::scoped_lock lock(s_LogMutex);
 
-				std::cout << "[" << connection_id << "]	error request header, session end." << std::endl;
+				Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	error request header, session end.";
 
 				break;
 			}
@@ -261,7 +262,7 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 						{
 							boost::mutex::scoped_lock lock(s_LogMutex);
 
-							std::cout << "[" << connection_id << "]	connection of \"" << host << ":" << port << "\" setup." << std::endl;
+							Log::shell(Log::Msg_SetUp) << "[" << connection_id << "]	connection of \"" << host << ":" << port << "\" setup.";
 						}
 
 						break;
@@ -270,7 +271,7 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 					{
 						boost::mutex::scoped_lock lock(s_LogMutex);
 
-						std::cerr << "[" << connection_id << "]	request connect failed: " << e.what() << std::endl;
+						Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	request connect failed: " << e.what();
 					}
 				}
 			}
@@ -301,13 +302,13 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 	{
 		boost::mutex::scoped_lock lock(s_LogMutex);
 
-		std::cerr << "[" << connection_id << "]	Exception: " << e.what() << std::endl;
+		Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	Exception: " << e.what();
 	}
 	catch(...)
 	{
 		boost::mutex::scoped_lock lock(s_LogMutex);
 
-		std::cerr << "[" << connection_id << "]	unknown exception: " << std::endl;
+		Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	unknown exception.";
 	}
 }
 
@@ -394,11 +395,11 @@ int main(int argc, char* argv[])
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << "Exception: " << e.what() << std::endl;
+		Log::shell(Log::Msg_Fatal) << "Exception: " << e.what();
 	}
 	catch(...)
 	{
-		std::cerr << "Unknown exception." << std::endl;
+		Log::shell(Log::Msg_Fatal) << "Unknown exception.";
 	}
 
 	std::system("pause");

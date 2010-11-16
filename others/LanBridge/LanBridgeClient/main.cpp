@@ -19,6 +19,7 @@
 
 #include "..\include\Common.h"
 #include "..\include\Bridge.h"
+#include "..\include\Log.h"
 
 #include "..\FileSystemBridge\FileSystemBridgePitcher.h"
 #include "..\FileSystemBridge\FileSystemBridgeCatcher.h"
@@ -107,7 +108,7 @@ void session_input(socket_ptr sock, const std::string& connection_id)
 				{
 					boost::mutex::scoped_lock lock(s_LogMutex);
 
-					std::cerr << "->	[" << connection_id << "]	response is empty, session end." << std::endl;
+					Log::shell(Log::Msg_Input) << "[" << connection_id << "]	response is empty, session end.";
 
 					break;
 				}
@@ -115,7 +116,7 @@ void session_input(socket_ptr sock, const std::string& connection_id)
 				{
 					boost::mutex::scoped_lock lock(s_LogMutex);
 
-					std::cout << "->	[" << connection_id << "]	response: " << length << " bytes." << std::endl;
+					Log::shell(Log::Msg_Input) << "[" << connection_id << "]	response: " << length << " bytes.";
 				}
 			}
 		}
@@ -124,7 +125,7 @@ void session_input(socket_ptr sock, const std::string& connection_id)
 	{
 		boost::mutex::scoped_lock lock(s_LogMutex);
 
-		std::cerr << "*	[" << connection_id << "]	input exception: " << e.what() << std::endl;
+		Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	input exception: " << e.what();
 	}
 
 	if(sock->is_open())
@@ -163,7 +164,7 @@ void session(socket_ptr sock)
 				boost::mutex::scoped_lock lock(s_LogMutex);
 
 				char* end = std::find(data, data + length, '\n');
-				std::cout << "<-	[" << connection_id << "]	request sent: " << length << " bytes: " << std::string(data, end - data) << std::endl;
+				Log::shell(Log::Msg_Output) << "[" << connection_id << "]	request sent: " << length << " bytes: " << std::string(data, end - data);
 			}
 
 			{
@@ -185,7 +186,7 @@ void session(socket_ptr sock)
 		{
 			boost::mutex::scoped_lock lock(s_LogMutex);
 
-			std::cerr << "*	[" << connection_id << "]	exception: " << e.what() << std::endl;
+			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
 		}
 
 		if(sock->is_open())
@@ -269,7 +270,7 @@ int main(int argc, char* argv[])
 			s_LocalId = vm["localid"].as<std::string>();
 
 		{
-			std::cout << "server started." << std::endl;
+			Log::shell(Log::Msg_SetUp) << "server started.";
 
 			tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
 			for(;;)
@@ -284,7 +285,7 @@ int main(int argc, char* argv[])
 	{
 		boost::mutex::scoped_lock lock(s_LogMutex);
 
-		std::cerr << "Exception: " << e.what() << std::endl;
+		Log::shell(Log::Msg_Fatal) << "Exception: " << e.what();
 	}
 
 	std::system("pause");

@@ -15,6 +15,8 @@
 
 //#include <windows.h>
 
+#include "Log.h"
+
 
 struct IPitcher;
 struct ICatcher;
@@ -113,7 +115,7 @@ private:
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << "*	[" << connection_id << "]	exception: " << e.what() << std::endl;
+			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
 		}
 	};
 
