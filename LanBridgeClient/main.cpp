@@ -153,11 +153,9 @@ void session(socket_ptr sock)
 			size_t length = sock->read_some(boost::asio::buffer(data, s_PackLength), error);
 			if(error == boost::asio::error::eof)
 				break; // Connection closed cleanly by peer.
-				//return; // Connection closed cleanly by peer.
 			else if(error)
 				throw boost::system::system_error(error); // Some other error.
 
-			//writeRequest(connection_id, data, length);
 			g_Bridge->write(connection_id, data, length);
 
 			{

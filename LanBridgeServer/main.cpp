@@ -179,7 +179,6 @@ void session_output(socket_ptr sock, const std::string& connection_id)
 				else
 				{
 					// end session
-					//writeResponse(connection_id, reply, 0);
 					g_Bridge->write(connection_id, reply, 0);
 
 					break;
@@ -195,7 +194,6 @@ void session_output(socket_ptr sock, const std::string& connection_id)
 				Log::shell(Log::Msg_Input) << "[" << connection_id << "]	reply: " << reply_length << " bytes received.";
 			}
 
-			//writeResponse(connection_id, reply, reply_length);
 			g_Bridge->write(connection_id, reply, reply_length);
 		}
 	}
@@ -250,7 +248,6 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 				break;
 			}
 
-			//const std::string command = parseCommand(&(request_buffer.front()));
 			const std::string command = parseCommand(request_buffer);
 			if(command.empty() && !sock->is_open())
 			{
@@ -264,7 +261,6 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 			if(!sock->is_open())
 			{
 				std::string host, port;
-				//parseHost(&(request_buffer.front()), host, port);
 				parseHost(request_buffer, host, port);
 
 				tcp::resolver resolver(io_service);
@@ -318,12 +314,10 @@ void session(boost::asio::io_service& io_service, const std::string& connection_
 				static const std::string reply = "HTTP/1.1 200 OK\r\n\r\n";
 				//static const std::string reply = "HTTP/1.1 204 No Content\r\n\r\n";
 
-				//writeResponse(connection_id, reply.data(), reply.length());
 				g_Bridge->write(connection_id, reply.data(), reply.length());
 			}
 			else
 			{
-				//boost::asio::write(*sock, boost::asio::buffer(&(request_buffer.front()), request_buffer.size()));
 				boost::asio::write(*sock, boost::asio::buffer(request_buffer, length));
 
 				if(!outputthread)
