@@ -17,7 +17,7 @@ namespace VideoBridge
 		case VF_16bits_i16:
 		case VF_16bits_i8:
 			{
-				const size_t datalen = alignSize(sizeof(::DWORD) + (source->size() / 30) * 32, linewidth);
+				const size_t datalen = alignSize(sizeof(::DWORD) + ((source->size() + 29) / 30) * 32, linewidth);
 				DataBufferPtr data(new DataBuffer(datalen, 0i8));
 				::WORD* p = (::WORD*)&(data->front());
 
@@ -78,7 +78,6 @@ namespace VideoBridge
 			, m_PixelSize(pixelsize)
 			, m_hDc(NULL)
 			, m_hBackDc(NULL)
-			//, m_hBitmap(NULL)
 			, m_BeginMarkBuffer(width * pixelsize, 0i8)
 			, m_EndMarkBuffer(width * pixelsize, 0i8)
 		{
@@ -99,7 +98,6 @@ namespace VideoBridge
 
 			::DWORD style = (WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST) & (~WS_MAXIMIZEBOX) & (~WS_THICKFRAME);
 				//WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_THICKFRAME|WS_MINIMIZEBOX|WS_VISIBLE
-				//(WS_OVERLAPPEDWINDOW & (~WS_MAXIMIZEBOX))
 
 			m_hWnd = ::CreateWindow("VideoBridge", "VideoBridge", style, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 				::GetDesktopWindow(), NULL, wndClass.hInstance, NULL);
@@ -119,8 +117,6 @@ namespace VideoBridge
 
 			m_hDc = ::GetDC(m_hWnd);
 			m_hBackDc = ::CreateCompatibleDC(NULL);
-
-			//m_hBitmap = ::CreateCompatibleBitmap(m_hDc, m_Width, m_Height);
 
 			// mark must occupy an entire pixel
 			assert(begin_mark.length() % m_PixelSize == 0);
@@ -146,8 +142,6 @@ namespace VideoBridge
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
 			}
-
-			//::RedrawWindow(m_hWnd, NULL, NULL, RDW_INTERNALPAINT);
 		};
 
 		void setData(const DataBufferPtr& data)
@@ -194,7 +188,7 @@ namespace VideoBridge
 			{
 				::HBITMAP bmpSource = ::CreateCompatibleBitmap(m_hDc, m_Width, m_Height);
 				{
-					size_t bodylines = (m_Data->size() + (m_Width * m_PixelSize) - 1) / (m_Width * m_PixelSize);
+					size_t bodylines = m_Data->size() / (m_Width * m_PixelSize);
 
 					::BITMAPINFO info;
 					info.bmiHeader.biSize = sizeof(::BITMAPINFOHEADER);
@@ -241,8 +235,6 @@ namespace VideoBridge
 
 		::HDC				m_hDc;
 		::HDC				m_hBackDc;
-
-		//::HBITMAP			m_hBitmap;
 
 		DataBufferPtr		m_Data;
 
