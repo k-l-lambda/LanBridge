@@ -72,6 +72,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanBridgeMessenger", "LanBr
 		{FFC519BE-E201-49A5-9FF2-8C9A2AF75F5C} = {FFC519BE-E201-49A5-9FF2-8C9A2AF75F5C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowPoser", "WindowPoser\WindowPoser.vcproj", "{316A3E3C-46C1-49FC-9CA9-CD22DC309B32}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -102,6 +108,10 @@ Global
 		{D14BD0F9-6011-4550-8BAF-72230D9A9711}.Debug|Win32.Build.0 = Debug|Win32
 		{D14BD0F9-6011-4550-8BAF-72230D9A9711}.Release|Win32.ActiveCfg = Release|Win32
 		{D14BD0F9-6011-4550-8BAF-72230D9A9711}.Release|Win32.Build.0 = Release|Win32
+		{316A3E3C-46C1-49FC-9CA9-CD22DC309B32}.Debug|Win32.ActiveCfg = Debug|Win32
+		{316A3E3C-46C1-49FC-9CA9-CD22DC309B32}.Debug|Win32.Build.0 = Debug|Win32
+		{316A3E3C-46C1-49FC-9CA9-CD22DC309B32}.Release|Win32.ActiveCfg = Release|Win32
+		{316A3E3C-46C1-49FC-9CA9-CD22DC309B32}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

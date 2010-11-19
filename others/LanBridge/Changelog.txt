@@ -4,6 +4,11 @@ TODO:
 
 
 
+2010.11.19	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	WindowPoser: project setup.
+
+
 2010.11.16	K.L.	<xxxK.L.xxx@gmail.com>
 
 	+	LanBridgeServer: host map added.
