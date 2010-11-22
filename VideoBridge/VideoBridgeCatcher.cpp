@@ -154,17 +154,6 @@ namespace VideoBridge
 
 					lock.reset();
 
-					// send confirm response
-					{
-						assert(m_Pitcher);
-
-						static const std::string s_Message = "OK";
-
-						m_Pitcher->write("-" + connection_id + ".VideoBridge", s_Message.data(), s_Message.length());
-
-						//std::cout << "[" << connection_id << "]	a video frame arrived, response sent." << std::endl;
-					}
-
 					return data->size();
 				}
 			}
@@ -209,6 +198,17 @@ namespace VideoBridge
 						assert(buffer);
 						assert(buffer.get());
 						m_ConnectionDataMap[connection_id].push_back(buffer);
+					}
+
+					// send confirm response
+					{
+						assert(m_Pitcher);
+
+						static const std::string s_Message = "OK";
+
+						m_Pitcher->write("-" + connection_id + ".VideoBridge", s_Message.data(), s_Message.length());
+
+						//std::cout << "[" << connection_id << "]	a video frame arrived, response sent." << std::endl;
 					}
 
 					if(connection_id[0] != '-')
