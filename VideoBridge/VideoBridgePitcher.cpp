@@ -70,7 +70,7 @@ namespace VideoBridge
 	class RenderWindow
 	{
 	public:
-		RenderWindow(size_t width, size_t height, VideoFormat format, size_t pixelsize)
+		RenderWindow(int x, int y, size_t width, size_t height, VideoFormat format, size_t pixelsize)
 			: m_Width(width)
 			, m_Height(height)
 			, m_hWnd(NULL)
@@ -107,7 +107,7 @@ namespace VideoBridge
 				::GetWindowRect(m_hWnd, &rcWnd);
 				::GetClientRect(m_hWnd, &rcClient);
 
-				::SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0,
+				::SetWindowPos(m_hWnd, HWND_TOPMOST, x, y,
 						m_Width + rcWnd.right - rcWnd.left - (rcClient.right - rcClient.left),
 						m_Height + rcWnd.bottom - rcWnd.top - (rcClient.bottom - rcClient.top),
 						SWP_SHOWWINDOW);
@@ -243,13 +243,13 @@ namespace VideoBridge
 	};
 
 
-	Pitcher::Pitcher(size_t frame_width, size_t frame_height, VideoFormat format)
+	Pitcher::Pitcher(size_t frame_width, size_t frame_height, VideoFormat format, int frame_x, int frame_y)
 		: m_VideoFormat(format)
 		, m_PixelSize(format == VF_24bits ? 3 : 2)
 		, m_DataWidth(frame_width * m_PixelSize)
 		, m_End(false)
 #pragma warning(suppress:4335)
-		, m_RenderThread(boost::bind(&Pitcher::render, this, frame_width, frame_height))
+		, m_RenderThread(boost::bind(&Pitcher::render, this, frame_x, frame_y, frame_width, frame_height))
 	{
 	}
 
@@ -313,9 +313,9 @@ namespace VideoBridge
 		}
 	}
 
-	void Pitcher::render(size_t frame_width, size_t frame_height)
+	void Pitcher::render(int frame_x, int frame_y, size_t frame_width, size_t frame_height)
 	{
-		RenderWindow window(frame_width, frame_height, m_VideoFormat, m_PixelSize);
+		RenderWindow window(frame_x, frame_y, frame_width, frame_height, m_VideoFormat, m_PixelSize);
 
 		while(!m_End)
 		{

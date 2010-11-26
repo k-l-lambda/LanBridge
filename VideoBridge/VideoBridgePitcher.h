@@ -17,7 +17,7 @@ namespace VideoBridge
 		: public IPitcher
 	{
 	public:
-		Pitcher(size_t frame_width, size_t frame_height, VideoFormat format = VF_24bits);
+		Pitcher(size_t frame_width, size_t frame_height, VideoFormat format = VF_24bits, int frame_x = 0, int frame_y = 0);
 		~Pitcher();
 
 	private:
@@ -26,7 +26,7 @@ namespace VideoBridge
 		virtual void write(const std::string& connection_id, const char* buffer, size_t length);
 
 	private:
-		void render(size_t frame_width, size_t frame_height);
+		void render(int frame_x, int frame_y, size_t frame_width, size_t frame_height);
 
 	private:
 		CatcherPtr					m_Catcher;

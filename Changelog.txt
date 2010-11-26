@@ -4,6 +4,11 @@ TODO:
 
 
 
+2010.11.26	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	VideoBridge: added frame position parameters.
+
+
 2010.11.19	K.L.	<xxxK.L.xxx@gmail.com>
 
 	+	WindowPoser: project setup.
