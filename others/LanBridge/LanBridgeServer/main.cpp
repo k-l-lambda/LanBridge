@@ -360,6 +360,8 @@ int main(int argc, char* argv[])
 		("udp_pitcher_port",		po::value<std::string>())
 		("udp_pitcher_interval",	po::value<unsigned long>())
 		("udp_catcher_port",		po::value<unsigned short>())
+		("video_pitcher_framex",	po::value<size_t>())
+		("video_pitcher_framey",	po::value<size_t>())
 		("video_pitcher_framewidth",	po::value<size_t>())
 		("video_pitcher_frameheight",	po::value<size_t>())
 		("video_pitcher_videoformat",	po::value<int>())
@@ -394,11 +396,13 @@ int main(int argc, char* argv[])
 		}
 		else if(pitchertype == "Video")
 		{
+			const size_t video_pitcher_framex = vm.count("video_pitcher_framex") ? vm["video_pitcher_framex"].as<size_t>() : 0;
+			const size_t video_pitcher_framey = vm.count("video_pitcher_framey") ? vm["video_pitcher_framey"].as<size_t>() : 0;
 			const size_t video_pitcher_framewidth = vm.count("video_pitcher_framewidth") ? vm["video_pitcher_framewidth"].as<size_t>() : 128;
 			const size_t video_pitcher_frameheight = vm.count("video_pitcher_frameheight") ? vm["video_pitcher_frameheight"].as<size_t>() : 128;
 			const int video_pitcher_videoformat = vm.count("video_pitcher_videoformat") ? vm["video_pitcher_videoformat"].as<int>() : VideoBridge::VF_24bits;
 
-			pitcher.reset(new VideoBridge::Pitcher(video_pitcher_framewidth, video_pitcher_frameheight, VideoBridge::VideoFormat(video_pitcher_videoformat)));
+			pitcher.reset(new VideoBridge::Pitcher(video_pitcher_framewidth, video_pitcher_frameheight, VideoBridge::VideoFormat(video_pitcher_videoformat), video_pitcher_framex, video_pitcher_framey));
 		}
 		else
 			throw std::runtime_error("unknown pitcher: " + pitchertype);
