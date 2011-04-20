@@ -1,7 +1,17 @@
 
 TODO:
+	LanBridgeServer:
+		system commands
+			client restart callback at begin
+			discard session
+			password
 	LanBridgeMessenger: system command, password.
 
+
+
+2011.4.20	K.L.	<xxxK.L.xxx@gmail.com>
+
+	>	WindowPoser: added parameter 'class'.
 
 
 2010.11.26	K.L.	<xxxK.L.xxx@gmail.com>
