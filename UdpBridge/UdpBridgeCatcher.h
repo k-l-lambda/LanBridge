@@ -15,11 +15,12 @@
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
-using boost::asio::ip::udp;
-
 
 namespace UdpBridge
 {
+	using boost::asio::ip::udp;
+
+
 	class Catcher
 		: public ICatcher
 	{

@@ -35,6 +35,10 @@
 #include "..\VideoBridge\VideoBridgeCatcher.h"
 #pragma comment(lib, "VideoBridge.lib")
 
+#include "..\MemoryBridge\MemoryBridgePitcher.h"
+#include "..\MemoryBridge\MemoryBridgeCatcher.h"
+#pragma comment(lib, "MemoryBridge.lib")
+
 
 namespace LanBridgeClient
 {
@@ -43,6 +47,9 @@ namespace LanBridgeClient
 	std::string g_RequestsDir, g_ReponsesDir;
 
 	boost::scoped_ptr<Bridge>	g_Bridge;
+
+	bool		g_LogRequests = false;
+	bool		g_LogResponse = false;
 
 
 	std::string getComputerName()
@@ -81,8 +88,8 @@ namespace LanBridgeClient
 
 	const unsigned long	s_DefaultInterval = 400;
 
-	static std::ofstream s_RequestsLog("requests.log", std::ios::app);
-	static std::ofstream s_ResponsesLog("responses.log", std::ios::app);
+	static std::ofstream s_RequestsLog;
+	static std::ofstream s_ResponsesLog;
 
 
 	void session_input(socket_ptr sock, const std::string& connection_id)
@@ -100,6 +107,7 @@ namespace LanBridgeClient
 					{
 						boost::asio::write(*sock, boost::asio::buffer(response_buffer, length));
 
+						if(g_LogResponse)
 						{
 							boost::mutex::scoped_lock lock(s_LogMutex);
 
@@ -139,8 +147,8 @@ namespace LanBridgeClient
 
 	void session(socket_ptr sock)
 	{
-		assert(s_RequestsLog.is_open());
-		assert(s_ResponsesLog.is_open());
+		assert(!g_LogRequests || s_RequestsLog.is_open());
+		assert(!g_LogResponse || s_ResponsesLog.is_open());
 
 		const std::string connection_id = genConnectionId();
 
@@ -169,6 +177,7 @@ namespace LanBridgeClient
 					Log::shell(Log::Msg_Output) << "[" << connection_id << "]	request sent: " << length << " bytes: " << std::string(data, end - data);
 				}
 
+				if(g_LogRequests)
 				{
 					boost::mutex::scoped_lock lock(s_LogMutex);
 
@@ -203,20 +212,24 @@ namespace LanBridgeClient
 
 		po::options_description desc("Allowed options");
 		desc.add_options()
-			("port",		po::value<short>(),			"port")
-			("localid",		po::value<std::string>(),	"local user id")
-			("pitcher",		po::value<std::string>())
-			("catcher",		po::value<std::string>())
-			("usage",		po::value<std::string>())
-			("station",		po::value<std::string>(),	"data transfer station")
-			("interval",	po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
-			("udp_pitcher_host",		po::value<std::string>())
-			("udp_pitcher_port",		po::value<std::string>())
-			("udp_pitcher_interval",	po::value<unsigned long>())
-			("udp_catcher_port",		po::value<unsigned short>())
+			("port",						po::value<short>(),			"port")
+			("localid",						po::value<std::string>(),	"local user id")
+			("interval",					po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
+			("log_requests",				po::value<bool>())
+			("log_response",				po::value<bool>())
+			("usage",						po::value<std::string>())
+			("pitcher",						po::value<std::string>())
+			("catcher",						po::value<std::string>())
+			("station",						po::value<std::string>(),	"data transfer station")
+			("udp_pitcher_host",			po::value<std::string>())
+			("udp_pitcher_port",			po::value<std::string>())
+			("udp_pitcher_interval",		po::value<unsigned long>())
+			("udp_catcher_port",			po::value<unsigned short>())
 			("video_pitcher_videoformat",	po::value<int>())
 			("video_catcher_videoformat",	po::value<int>())
 			("video_catcher_interval",		po::value<unsigned long>())
+			("memory_pitcher_repository",	po::value<std::string>())
+			("memory_catcher_repository",	po::value<std::string>())
 		;
 
 		try
@@ -228,6 +241,13 @@ namespace LanBridgeClient
 			const short port = vm["port"].as<short>();
 			const std::string station = vm.count("station") ? vm["station"].as<std::string>() : "";
 			const unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : s_DefaultInterval;
+			g_LogRequests = vm.count("log_requests") && vm["interval"].as<bool>();
+			g_LogResponse = vm.count("log_response") && vm["interval"].as<bool>();
+
+			if(g_LogRequests)
+				s_RequestsLog.open("requests.log", std::ios::app);
+			if(g_LogResponse)
+				s_ResponsesLog.open("responses.log", std::ios::app);
 
 			const std::string pitchertype = vm.count("pitcher") ? vm["pitcher"].as<std::string>() : "FileSystem";
 			const std::string catchertype = vm.count("catcher") ? vm["catcher"].as<std::string>() : "FileSystem";
@@ -244,6 +264,10 @@ namespace LanBridgeClient
 				const unsigned long udp_pitcher_interval = vm.count("udp_pitcher_interval") ? vm["udp_pitcher_interval"].as<unsigned long>() : 10;
 
 				pitcher.reset(new UdpBridge::Pitcher(io_service, udp_pitcher_host, udp_pitcher_port, udp_pitcher_interval));
+			}
+			else if(pitchertype == "Memory")
+			{
+				pitcher.reset(new MemoryBridge::Pitcher(vm["memory_pitcher_repository"].as<std::string>()));
 			}
 			else
 				throw std::runtime_error("unknown pitcher: " + pitchertype);
@@ -263,6 +287,10 @@ namespace LanBridgeClient
 				const unsigned long video_catcher_interval = vm.count("video_catcher_interval") ? vm["video_catcher_interval"].as<unsigned long>() : 160;
 
 				catcher.reset(new VideoBridge::Catcher(s_PackLength, video_catcher_interval, VideoBridge::VideoFormat(video_catcher_videoformat)));
+			}
+			else if(catchertype == "Memory")
+			{
+				catcher.reset(new MemoryBridge::Catcher(s_PackLength, interval, vm["memory_catcher_repository"].as<std::string>()));
 			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);

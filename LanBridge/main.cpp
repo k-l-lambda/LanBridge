@@ -1,6 +1,7 @@
 
 #include <boost/program_options.hpp>
 #include <boost/thread.hpp>
+#include <boost/assign.hpp>
 
 #include "..\include\Log.h"
 
@@ -49,15 +50,25 @@ int main(int argc, char* argv[])
 		{
 			Log::shell(Log::Msg_Information) << "LanBridge Station starting...";
 
-			const int argcount = argc + 2;
-			std::vector<char*> argvalues;
-			for(size_t i = 0; i < argc; ++i)
-				argvalues.push_back(argv[i]);
-			argvalues.push_back("--pitcher=Memory");
-			argvalues.push_back("--catcher=Memory");
+			std::vector<char*> cargv = boost::assign::list_of
+				(argv[0])
+				("--pitcher=Memory")
+				("--catcher=Memory")
+				("--memory_pitcher_repository=requests")
+				("--memory_catcher_repository=responses")
+				;
+			for(int i = 1; i < argc; ++i)
+				cargv.push_back(argv[i]);
 
-			boost::thread t(boost::bind(LanBridgeClient::main, argcount, &(argvalues[0])));
-			return LanBridgeServer::main(argcount, &(argvalues[0]));
+			char* sargv[] =
+			{
+				argv[0], "--pitcher=Memory", "--catcher=Memory",
+				"--memory_pitcher_repository=responses",
+				"--memory_catcher_repository=requests",
+			};
+
+			boost::thread t(boost::bind(LanBridgeClient::main, cargv.size(), &(cargv[0])));
+			return LanBridgeServer::main(5, sargv);
 		}
 		else
 			throw std::runtime_error("unknown usage: " + usage);

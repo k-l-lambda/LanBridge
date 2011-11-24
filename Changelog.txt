@@ -12,6 +12,8 @@ TODO:
 
 2011.11.24	K.L.	<xxxK.L.xxx@gmail.com>
 
+	+	MemoryBridge: project setup.
+
 	+	LanBridge: project setup.
 
 
