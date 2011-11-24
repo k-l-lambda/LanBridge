@@ -1,5 +1,6 @@
 
 TODO:
+	MemoryBridge
 	LanBridgeServer:
 		system commands
 			client restart callback at begin
@@ -7,6 +8,11 @@ TODO:
 			password
 	LanBridgeMessenger: system command, password.
 
+
+
+2011.11.24	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	LanBridge: project setup.
 
 
 2011.4.20	K.L.	<xxxK.L.xxx@gmail.com>
