@@ -34,6 +34,10 @@
 #include "..\VideoBridge\VideoBridgeCatcher.h"
 #pragma comment(lib, "VideoBridge.lib")
 
+#include "..\MemoryBridge\MemoryBridgePitcher.h"
+#include "..\MemoryBridge\MemoryBridgeCatcher.h"
+#pragma comment(lib, "MemoryBridge.lib")
+
 
 namespace LanBridgeServer
 {
@@ -356,11 +360,11 @@ namespace LanBridgeServer
 
 		po::options_description desc("Allowed options");
 		desc.add_options()
+			("interval",	po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
+			("usage",		po::value<std::string>())
 			("pitcher",		po::value<std::string>())
 			("catcher",		po::value<std::string>())
-			("usage",		po::value<std::string>())
 			("station",		po::value<std::string>(),							"data transfer station")
-			("interval",	po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
 			("udp_pitcher_host",		po::value<std::string>())
 			("udp_pitcher_port",		po::value<std::string>())
 			("udp_pitcher_interval",	po::value<unsigned long>())
@@ -371,6 +375,8 @@ namespace LanBridgeServer
 			("video_pitcher_frameheight",	po::value<size_t>())
 			("video_pitcher_videoformat",	po::value<int>())
 			("video_catcher_videoformat",	po::value<int>())
+			("memory_pitcher_repository",	po::value<std::string>())
+			("memory_catcher_repository",	po::value<std::string>())
 		;
 
 		try
@@ -409,6 +415,10 @@ namespace LanBridgeServer
 
 				pitcher.reset(new VideoBridge::Pitcher(video_pitcher_framewidth, video_pitcher_frameheight, VideoBridge::VideoFormat(video_pitcher_videoformat), video_pitcher_framex, video_pitcher_framey));
 			}
+			else if(pitchertype == "Memory")
+			{
+				pitcher.reset(new MemoryBridge::Pitcher(vm["memory_pitcher_repository"].as<std::string>()));
+			}
 			else
 				throw std::runtime_error("unknown pitcher: " + pitchertype);
 
@@ -424,6 +434,10 @@ namespace LanBridgeServer
 				const unsigned short udp_catcher_port = vm["udp_catcher_port"].as<unsigned short>();
 
 				catcher.reset(new UdpBridge::Catcher(s_PackLength, io_service, udp_catcher_port, interval));
+			}
+			else if(catchertype == "Memory")
+			{
+				catcher.reset(new MemoryBridge::Catcher(s_PackLength, interval, vm["memory_catcher_repository"].as<std::string>()));
 			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);
