@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="gb2312"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="MemoryBridge"
 	ProjectGUID="{4B405843-F070-44B1-AA7D-244B2EF5128A}"
 	RootNamespace="MemoryBridge"
