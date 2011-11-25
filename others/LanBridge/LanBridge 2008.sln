@@ -45,7 +45,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanBridge", "LanBridge\LanB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bridges", "Bridges", "{34884C23-4547-4DE7-92CB-9E78A30F6323}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryBridge", "MemoryBridge\MemoryBridge.vcproj", "{4B405843-F070-44B1-AA7D-244B2EF5128A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryBridge", "MemoryBridge\MemoryBridge vc9.vcproj", "{4B405843-F070-44B1-AA7D-244B2EF5128A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
