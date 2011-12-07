@@ -1,6 +1,5 @@
 
 TODO:
-	MemoryBridge
 	LanBridgeServer:
 		system commands
 			client restart callback at begin
@@ -8,6 +7,11 @@ TODO:
 			password
 	LanBridgeMessenger: system command, password.
 
+
+
+2011.12.7	K.L.	<xxxK.L.xxx@gmail.com>
+
+	>	Remove mutex locks on console log.
 
 
 2011.11.24	K.L.	<xxxK.L.xxx@gmail.com>

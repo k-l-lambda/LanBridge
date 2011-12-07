@@ -1,5 +1,9 @@
 
+#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
+
 #include "FileSystemBridgePitcher.h"
+
+#include "..\include\Common.h"
 
 #include <fstream>
 
@@ -35,7 +39,7 @@ namespace FileSystemBridge
 		const std::string targetfilename = filename + ".data";
 
 		unsigned long interval = 100;
-		while(boost::filesystem::exists(targetfilename))
+		while(fileExistsOrFail(targetfilename))
 		{
 			::Sleep(interval);
 

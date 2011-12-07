@@ -174,8 +174,6 @@ namespace LanBridgeServer
 				if(error == boost::asio::error::eof || reply_length == 0)
 				{
 					{
-						boost::mutex::scoped_lock lock(s_LogMutex);
-
 						if(error == boost::asio::error::eof)
 							Log::shell(Log::Msg_Clew) << "[" << connection_id << "]	EOF.";
 						else if(reply_length == 0)
@@ -196,22 +194,14 @@ namespace LanBridgeServer
 					continue;
 				}
 
-				{
-					boost::mutex::scoped_lock lock(s_LogMutex);
-
-					Log::shell(Log::Msg_Input) << "[" << connection_id << "]	reply: " << reply_length << " bytes received.";
-				}
+				Log::shell(Log::Msg_Input) << "[" << connection_id << "]	reply: " << reply_length << " bytes received.";
 
 				g_Bridge->write(connection_id, reply, reply_length);
 			}
 		}
 		catch(const std::exception& e)
 		{
-			{
-				boost::mutex::scoped_lock lock(s_LogMutex);
-
-				Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
-			}
+			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
 
 			try
 			{
@@ -224,8 +214,6 @@ namespace LanBridgeServer
 		}
 		catch(...)
 		{
-			boost::mutex::scoped_lock lock(s_LogMutex);
-
 			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	unknown exception.";
 		}
 	}
@@ -248,8 +236,6 @@ namespace LanBridgeServer
 				//if(request_buffer.empty())
 				if(!length)
 				{
-					boost::mutex::scoped_lock lock(s_LogMutex);
-
 					Log::shell(Log::Msg_Remove) << "[" << connection_id << "]	0 byte request received, session end.";
 
 					//throw std::runtime_error("request buffer is empty.");
@@ -259,8 +245,6 @@ namespace LanBridgeServer
 				const std::string command = parseCommand(request_buffer);
 				if(command.empty() && !sock->is_open())
 				{
-					boost::mutex::scoped_lock lock(s_LogMutex);
-
 					Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	error request header, session end.";
 
 					break;
@@ -299,18 +283,12 @@ namespace LanBridgeServer
 							sock->connect(*iterator);
 							assert(sock->is_open());
 
-							{
-								boost::mutex::scoped_lock lock(s_LogMutex);
-
-								Log::shell(Log::Msg_SetUp) << "[" << connection_id << "]	connection of \"" << host << ":" << port << "\" setup.";
-							}
+							Log::shell(Log::Msg_SetUp) << "[" << connection_id << "]	connection of \"" << host << ":" << port << "\" setup.";
 
 							break;
 						}
 						catch(const std::exception& e)
 						{
-							boost::mutex::scoped_lock lock(s_LogMutex);
-
 							Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	request connect failed: " << e.what();
 						}
 					}
@@ -338,14 +316,10 @@ namespace LanBridgeServer
 		}
 		catch(const std::exception& e)
 		{
-			boost::mutex::scoped_lock lock(s_LogMutex);
-
 			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	Exception: " << e.what();
 		}
 		catch(...)
 		{
-			boost::mutex::scoped_lock lock(s_LogMutex);
-
 			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	unknown exception.";
 		}
 	}
