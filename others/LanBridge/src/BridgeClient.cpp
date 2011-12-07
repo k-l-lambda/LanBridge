@@ -149,7 +149,7 @@ namespace LanBridgeClient
 							std::ofstream& log = sessionLog().get(connection_id);
 							log << ">>>>>>\t" << now() << std::endl;
 							log.write(response_buffer, length);
-							log << std::endl;
+							log << std::endl << std::endl;
 						}
 					}
 					else
@@ -160,7 +160,7 @@ namespace LanBridgeClient
 						{
 							boost::mutex::scoped_lock lock(s_LogMutex);
 
-							sessionLog().get(connection_id) << "END" << std::endl;
+							sessionLog().get(connection_id) << ">>\t" << now() << "\tEND" << std::endl;
 							sessionLog().close(connection_id);
 						}
 
@@ -200,7 +200,19 @@ namespace LanBridgeClient
 				boost::system::error_code error;
 				size_t length = sock->read_some(boost::asio::buffer(data, s_PackLength), error);
 				if(error == boost::asio::error::eof)
-					break; // Connection closed cleanly by peer.
+				{
+					Log::shell(Log::Msg_Clew) << "[" << connection_id << "]	connection closed by peer.";
+
+					if(g_LogBySession)
+					{
+						boost::mutex::scoped_lock lock(s_LogMutex);
+
+						sessionLog().get(connection_id) << "<<\t" << now() << "\tPEER END" << std::endl;
+						sessionLog().close(connection_id);
+					}
+
+					break;
+				}
 				else if(error)
 					throw boost::system::system_error(error); // Some other error.
 
@@ -217,7 +229,7 @@ namespace LanBridgeClient
 
 					s_RequestsLog << std::endl << "[" << now() << "]\t" << "request " << connection_id << ":" << std::endl;
 					s_RequestsLog.write(data, length);
-					s_RequestsLog << std::endl;
+					s_RequestsLog << std::endl << std::endl;
 				}
 
 				if(g_LogBySession)
