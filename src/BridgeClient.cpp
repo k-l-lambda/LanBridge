@@ -50,6 +50,7 @@ namespace LanBridgeClient
 
 	bool		g_LogRequests = false;
 	bool		g_LogResponse = false;
+	bool		g_LogBySession = false;
 
 
 	std::string getComputerName()
@@ -91,6 +92,31 @@ namespace LanBridgeClient
 	static std::ofstream s_RequestsLog;
 	static std::ofstream s_ResponsesLog;
 
+	struct SessionLog
+	{
+		std::map<std::string, boost::shared_ptr<std::ofstream> >	m_StreamMap;
+
+		std::ofstream&	get(const std::string& id)
+		{
+			if(!m_StreamMap.count(id))
+				m_StreamMap.insert(std::make_pair(id, new std::ofstream(("logs\\" + id + ".log").data(), std::ios::app)));
+
+			return *(m_StreamMap[id]);
+		};
+
+		void	close(const std::string& id)
+		{
+			if(m_StreamMap.count(id))
+				m_StreamMap.erase(id);
+		};
+	};
+
+	static SessionLog& sessionLog()
+	{
+		static SessionLog log;
+		return log;
+	};
+
 
 	void session_input(socket_ptr sock, const std::string& connection_id)
 	{
@@ -115,28 +141,38 @@ namespace LanBridgeClient
 							s_ResponsesLog.write(response_buffer, length);
 							s_ResponsesLog << std::endl;
 						}
+
+						if(g_LogBySession)
+						{
+							boost::mutex::scoped_lock lock(s_LogMutex);
+
+							std::ofstream& log = sessionLog().get(connection_id);
+							log << ">>>>>>\t" << now() << std::endl;
+							log.write(response_buffer, length);
+							log << std::endl;
+						}
 					}
 					else
 					{
-						boost::mutex::scoped_lock lock(s_LogMutex);
-
 						Log::shell(Log::Msg_Input) << "[" << connection_id << "]	response is empty, session end.";
+
+						if(g_LogBySession)
+						{
+							boost::mutex::scoped_lock lock(s_LogMutex);
+
+							sessionLog().get(connection_id) << "END" << std::endl;
+							sessionLog().close(connection_id);
+						}
 
 						break;
 					}
 
-					{
-						boost::mutex::scoped_lock lock(s_LogMutex);
-
-						Log::shell(Log::Msg_Input) << "[" << connection_id << "]	response: " << length << " bytes.";
-					}
+					Log::shell(Log::Msg_Input) << "[" << connection_id << "]	response: " << length << " bytes.";
 				}
 			}
 		}
 		catch(const std::exception& e)
 		{
-			boost::mutex::scoped_lock lock(s_LogMutex);
-
 			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	input exception: " << e.what();
 		}
 
@@ -171,8 +207,6 @@ namespace LanBridgeClient
 				g_Bridge->write(connection_id, data, length);
 
 				{
-					boost::mutex::scoped_lock lock(s_LogMutex);
-
 					char* end = std::find(data, data + length, '\n');
 					Log::shell(Log::Msg_Output) << "[" << connection_id << "]	request sent: " << length << " bytes: " << std::string(data, end - data);
 				}
@@ -185,6 +219,16 @@ namespace LanBridgeClient
 					s_RequestsLog.write(data, length);
 					s_RequestsLog << std::endl;
 				}
+
+				if(g_LogBySession)
+				{
+					boost::mutex::scoped_lock lock(s_LogMutex);
+
+					std::ofstream& log = sessionLog().get(connection_id);
+					log << "<<<<<<\t" << now() << std::endl;
+					log.write(data, length);
+					log << std::endl;
+				}
 			}
 
 			g_Bridge->write(connection_id, NULL, 0);
@@ -194,11 +238,7 @@ namespace LanBridgeClient
 		}
 		catch(const std::exception& e)
 		{
-			{
-				boost::mutex::scoped_lock lock(s_LogMutex);
-
-				Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
-			}
+			Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	exception: " << e.what();
 
 			if(sock->is_open())
 				sock->close();
@@ -217,6 +257,7 @@ namespace LanBridgeClient
 			("interval",					po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
 			("log_requests",				po::value<bool>())
 			("log_response",				po::value<bool>())
+			("log_by_session",				po::value<bool>())
 			("usage",						po::value<std::string>())
 			("pitcher",						po::value<std::string>())
 			("catcher",						po::value<std::string>())
@@ -241,8 +282,9 @@ namespace LanBridgeClient
 			const short port = vm["port"].as<short>();
 			const std::string station = vm.count("station") ? vm["station"].as<std::string>() : "";
 			const unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : s_DefaultInterval;
-			g_LogRequests = vm.count("log_requests") && vm["interval"].as<bool>();
-			g_LogResponse = vm.count("log_response") && vm["interval"].as<bool>();
+			g_LogRequests = vm.count("log_requests") && vm["log_requests"].as<bool>();
+			g_LogResponse = vm.count("log_response") && vm["log_response"].as<bool>();
+			g_LogBySession = vm.count("log_by_session") && vm["log_by_session"].as<bool>();
 
 			if(g_LogRequests)
 				s_RequestsLog.open("requests.log", std::ios::app);
@@ -314,8 +356,6 @@ namespace LanBridgeClient
 		}
 		catch(const std::exception& e)
 		{
-			boost::mutex::scoped_lock lock(s_LogMutex);
-
 			Log::shell(Log::Msg_Fatal) << "Exception: " << e.what();
 		}
 

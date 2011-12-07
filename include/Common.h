@@ -40,6 +40,18 @@ inline void progressiveWait(boost::function<bool ()> condition, unsigned long st
 	}
 }
 
+inline bool fileExistsOrFail(const std::string& path)
+{
+	try
+	{
+		return boost::filesystem::exists(path);
+	}
+	catch(const boost::system::system_error&)
+	{
+		return true;
+	}
+};
+
 
 
 #endif // !defined(__COMMON_H__)
