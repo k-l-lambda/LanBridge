@@ -180,7 +180,7 @@ namespace LanBridgeServer
 							Log::shell(Log::Msg_Clew) << "[" << connection_id << "]	0 byte replied.";
 					}
 
-					if(interval < 20000)
+					if(interval < 2000)
 						interval *= 2;
 					else
 					{
