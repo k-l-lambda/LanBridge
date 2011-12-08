@@ -160,6 +160,18 @@ namespace LanBridgeServer
 			host = g_HostMap[host];
 	}
 
+	std::string	translateHeaders(const std::string& request)
+	{
+		// remove host name from URL in start line
+		std::string result = boost::regex_replace(request, boost::regex("^([A-Z]+\\s+)(\\w+:/*[^/]+)(\\S+\\s+[A-Z]+/[\\d\\.]+)$"), "\\1\\3");
+
+		// convert header: "Proxy-Connection" -> "Connection"
+		result = boost::regex_replace(result, boost::regex("^(Proxy-Connection:)", boost::regex_constants::icase), "Connection:");
+		//result = boost::regex_replace(result, boost::regex("^Connection:.*$", boost::regex_constants::icase), "");
+
+		return result;
+	}
+
 
 	void session_output(socket_ptr sock, const std::string& connection_id)
 	{
@@ -250,6 +262,8 @@ namespace LanBridgeServer
 					break;
 				}
 
+				const bool firstPack = !sock->is_open();
+
 				if(!sock->is_open())
 				{
 					std::string host, port;
@@ -304,7 +318,17 @@ namespace LanBridgeServer
 				}
 				else
 				{
-					boost::asio::write(*sock, boost::asio::buffer(request_buffer, length));
+					const char* sent_buffer = request_buffer;
+					size_t sent_length = length;
+					std::string translation;
+					if(firstPack)
+					{
+						translation = translateHeaders(std::string(request_buffer, length));
+						sent_buffer = translation.data();
+						sent_length = translation.length();
+					}
+
+					boost::asio::write(*sock, boost::asio::buffer(sent_buffer, sent_length));
 
 					if(!outputthread)
 						outputthread.reset(new boost::thread(bind(&session_output, boost::ref(sock), connection_id)));
