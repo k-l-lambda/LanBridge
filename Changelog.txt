@@ -9,6 +9,13 @@ TODO:
 
 
 
+2011.12.8	K.L.	<xxxK.L.xxx@gmail.com>
+
+	+	src\BridgeServer.cpp: translateHeaders added.
+
+	*!	HTTP 404 error on some host is due to URL contains host name in start line, while the web server suppose that should not do.
+
+
 2011.12.7	K.L.	<xxxK.L.xxx@gmail.com>
 
 	>	Remove mutex locks on console log.
