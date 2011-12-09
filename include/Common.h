@@ -10,6 +10,8 @@
 #include <string>
 #include <iostream>
 
+#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
+
 #pragma warning(push, 1)
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
@@ -17,7 +19,6 @@
 #include <boost/asio.hpp>
 #pragma warning(pop)
 
-#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
 #include <windows.h>
 
 

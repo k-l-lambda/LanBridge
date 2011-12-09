@@ -1,10 +1,10 @@
 
-#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
-
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
 #include <fstream>
+
+#define	_WIN32_WINNT	0x0501	// Windows XP at lowest
 
 #pragma warning(push, 1)
 #include <boost/bind.hpp>
@@ -267,9 +267,9 @@ namespace LanBridgeClient
 			("port",						po::value<short>(),			"port")
 			("localid",						po::value<std::string>(),	"local user id")
 			("interval",					po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
-			("log_requests",				po::value<bool>())
-			("log_response",				po::value<bool>())
-			("log_by_session",				po::value<bool>())
+			("log_requests",				po::value<bool>()->implicit_value(true))
+			("log_response",				po::value<bool>()->implicit_value(true))
+			("log_by_session",				po::value<bool>()->implicit_value(true))
 			("usage",						po::value<std::string>())
 			("pitcher",						po::value<std::string>())
 			("catcher",						po::value<std::string>())
