@@ -329,10 +329,10 @@ namespace LanBridgeServer
 					}
 
 					boost::asio::write(*sock, boost::asio::buffer(sent_buffer, sent_length));
-
-					if(!outputthread)
-						outputthread.reset(new boost::thread(bind(&session_output, boost::ref(sock), connection_id)));
 				}
+
+				if(!outputthread)
+					outputthread.reset(new boost::thread(bind(&session_output, boost::ref(sock), connection_id)));
 			}
 
 			if(sock->is_open())

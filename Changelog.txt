@@ -9,80 +9,85 @@ TODO:
 
 
 
-2011.12.8	K.L.	<xxxK.L.xxx@gmail.com>
+2012.1.6	K.L.	<k.l.lambda@gmail.com>
 
-	+	src\BridgeServer.cpp: translateHeaders added.
+	>	src/BridgeServer.cpp: refined 'CONNECT' command.
+
+
+2011.12.8	K.L.	<k.l.lambda@gmail.com>
+
+	+	src/BridgeServer.cpp: translateHeaders added.
 
 	*!	HTTP 404 error on some host is due to URL contains host name in start line, while the web server suppose that should not do.
 
 
-2011.12.7	K.L.	<xxxK.L.xxx@gmail.com>
+2011.12.7	K.L.	<k.l.lambda@gmail.com>
 
 	>	Remove mutex locks on console log.
 
 
-2011.11.24	K.L.	<xxxK.L.xxx@gmail.com>
+2011.11.24	K.L.	<k.l.lambda@gmail.com>
 
 	+	MemoryBridge: project setup.
 
 	+	LanBridge: project setup.
 
 
-2011.4.20	K.L.	<xxxK.L.xxx@gmail.com>
+2011.4.20	K.L.	<k.l.lambda@gmail.com>
 
 	>	WindowPoser: added parameter 'class'.
 
 
-2010.11.26	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.26	K.L.	<k.l.lambda@gmail.com>
 
 	+	VideoBridge: added frame position parameters.
 
 
-2010.11.19	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.19	K.L.	<k.l.lambda@gmail.com>
 
 	+	WindowPoser: project setup.
 
 
-2010.11.16	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.16	K.L.	<k.l.lambda@gmail.com>
 
 	+	LanBridgeServer: host map added.
 
 	+	include/Log.h: created.
 
 
-2010.11.15	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.15	K.L.	<k.l.lambda@gmail.com>
 
 	+	Catcher: 'new connection avoid' mark added.
 
 	+	VideoBridge: 16bit color encode/decode implemented.
 
 
-2010.11.12	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.12	K.L.	<k.l.lambda@gmail.com>
 
 	+	VideoBridge: 16it color format added.
 
 	+	VideoBridge/VideoBridge::Catcher: video capture implemented.
 
 
-2010.11.11	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.11	K.L.	<k.l.lambda@gmail.com>
 
 	+	LanBridgeMessenger: project setup.
 
 	+	VideoBridge: project setup.
 
 
-2010.11.10	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.10	K.L.	<k.l.lambda@gmail.com>
 
 	+	UdpBridge: project setup.
 	+	FileSystemBridge: project setup.
 
 
-2010.11.6	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.6	K.L.	<k.l.lambda@gmail.com>
 
 	>	LanBridgeServer: ipv6 support added.
 
 
-2010.11.5	K.L.	<xxxK.L.xxx@gmail.com>
+2010.11.5	K.L.	<k.l.lambda@gmail.com>
 
 	>	LanBridgeServer: fixed bug of sock corruption in thread 'session_output'.
 
