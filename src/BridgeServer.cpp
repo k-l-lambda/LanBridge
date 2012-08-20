@@ -332,7 +332,7 @@ namespace LanBridgeServer
 				}
 
 				if(!outputthread)
-					outputthread.reset(new boost::thread(bind(&session_output, boost::ref(sock), connection_id)));
+					outputthread.reset(new boost::thread(boost::bind(&session_output, boost::ref(sock), connection_id)));
 			}
 
 			if(sock->is_open())
