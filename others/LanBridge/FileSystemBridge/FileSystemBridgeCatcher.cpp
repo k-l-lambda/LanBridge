@@ -52,12 +52,21 @@ namespace FileSystemBridge
 		{
 			if(boost::filesystem::is_regular_file(it->status()))
 			{
+#if	BOOST_FILESYSTEM_VERSION >= 3
+				const std::string extension = boost::to_lower_copy(it->path().extension().string());
+				if(extension == ".data")
+				{
+					if(it->path().stem().string()[0] != '-')
+						acceptor(it->path().stem().string());
+				}
+#else
 				const std::string extension = boost::to_lower_copy(it->path().extension());
 				if(extension == ".data")
 				{
 					if(it->path().stem()[0] != '-')
 						acceptor(it->path().stem());
 				}
+#endif
 			}
 		}
 	}
