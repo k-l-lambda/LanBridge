@@ -91,19 +91,19 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FileSystemBridge\FileSystemBridge_vc9.vcxproj">
+    <ProjectReference Include="..\FileSystemBridge\FileSystemBridge_vc10.vcxproj">
       <Project>{df7e7e00-fd2a-4ee4-b8b0-aca2c66c31ac}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\MemoryBridge\MemoryBridge vc9.vcxproj">
+    <ProjectReference Include="..\MemoryBridge\MemoryBridge vc10.vcxproj">
       <Project>{4b405843-f070-44b1-aa7d-244b2ef5128a}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\UdpBridge\UdpBridge_vc9.vcxproj">
+    <ProjectReference Include="..\UdpBridge\UdpBridge_vc10.vcxproj">
       <Project>{497bffb5-45ce-4355-8b31-88fe49c90592}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\VideoBridge\VideoBridge_vc9.vcxproj">
+    <ProjectReference Include="..\VideoBridge\VideoBridge_vc10.vcxproj">
       <Project>{ffc519be-e201-49a5-9ff2-8c9a2af75f5c}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
