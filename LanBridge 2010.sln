@@ -15,19 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{084BFDF3-9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bridges", "Bridges", "{34884C23-4547-4DE7-92CB-9E78A30F6323}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanBridgeClient", "LanBridgeClient\LanBridgeClient vc9.vcxproj", "{33FB3F11-C170-48EB-899A-D553CF5D8567}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSystemBridge", "FileSystemBridge\FileSystemBridge_vc10.vcxproj", "{DF7E7E00-FD2A-4EE4-B8B0-ACA2C66C31AC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanBridgeServer", "LanBridgeServer\LanBridgeServer vc9.vcxproj", "{61F49D68-D7F8-448E-890D-51189DC84D38}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdpBridge", "UdpBridge\UdpBridge_vc10.vcxproj", "{497BFFB5-45CE-4355-8B31-88FE49C90592}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSystemBridge", "FileSystemBridge\FileSystemBridge_vc9.vcxproj", "{DF7E7E00-FD2A-4EE4-B8B0-ACA2C66C31AC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideoBridge", "VideoBridge\VideoBridge_vc10.vcxproj", "{FFC519BE-E201-49A5-9FF2-8C9A2AF75F5C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdpBridge", "UdpBridge\UdpBridge_vc9.vcxproj", "{497BFFB5-45CE-4355-8B31-88FE49C90592}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanBridge", "LanBridge\LanBridge vc10.vcxproj", "{C8B0EF30-A543-4B89-A4DC-0F34A7A2E182}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideoBridge", "VideoBridge\VideoBridge_vc9.vcxproj", "{FFC519BE-E201-49A5-9FF2-8C9A2AF75F5C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanBridge", "LanBridge\LanBridge vc9.vcxproj", "{C8B0EF30-A543-4B89-A4DC-0F34A7A2E182}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryBridge", "MemoryBridge\MemoryBridge vc9.vcxproj", "{4B405843-F070-44B1-AA7D-244B2EF5128A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryBridge", "MemoryBridge\MemoryBridge vc10.vcxproj", "{4B405843-F070-44B1-AA7D-244B2EF5128A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,14 +31,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{33FB3F11-C170-48EB-899A-D553CF5D8567}.Debug|Win32.ActiveCfg = Debug|Win32
-		{33FB3F11-C170-48EB-899A-D553CF5D8567}.Debug|Win32.Build.0 = Debug|Win32
-		{33FB3F11-C170-48EB-899A-D553CF5D8567}.Release|Win32.ActiveCfg = Release|Win32
-		{33FB3F11-C170-48EB-899A-D553CF5D8567}.Release|Win32.Build.0 = Release|Win32
-		{61F49D68-D7F8-448E-890D-51189DC84D38}.Debug|Win32.ActiveCfg = Debug|Win32
-		{61F49D68-D7F8-448E-890D-51189DC84D38}.Debug|Win32.Build.0 = Debug|Win32
-		{61F49D68-D7F8-448E-890D-51189DC84D38}.Release|Win32.ActiveCfg = Release|Win32
-		{61F49D68-D7F8-448E-890D-51189DC84D38}.Release|Win32.Build.0 = Release|Win32
 		{DF7E7E00-FD2A-4EE4-B8B0-ACA2C66C31AC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{DF7E7E00-FD2A-4EE4-B8B0-ACA2C66C31AC}.Debug|Win32.Build.0 = Debug|Win32
 		{DF7E7E00-FD2A-4EE4-B8B0-ACA2C66C31AC}.Release|Win32.ActiveCfg = Release|Win32
