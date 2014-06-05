@@ -48,11 +48,21 @@ namespace LanBridgeServer
 	std::string g_RequestsDir, g_ReponsesDir;
 
 	static boost::mutex s_LogMutex;
+	static boost::mutex s_HostMapMutex;
 
 	boost::scoped_ptr<Bridge>	g_Bridge;
 
 	std::map<std::string, std::string>		g_HostMap;
 
+
+	std::string trimString(const std::string& s)
+	{
+		std::string r = s;
+		while(!r.empty() && r[r.size() - 1] == '\0')
+			r = r.substr(0, r.size() - 1);
+
+		return r;
+	}
 
 	void loadHostMap()
 	{
@@ -72,7 +82,7 @@ namespace LanBridgeServer
 				bool result = boost::regex_match(sline, what, boost::regex("(\\S+)\\s+(\\S+).*"));
 				if(result && what.size() >= 3)
 				{
-					g_HostMap.insert(std::make_pair(what[2].str(), what[1].str()));
+					g_HostMap.insert(std::make_pair(trimString(what[2].str()), what[1].str()));
 				}
 			}
 
@@ -156,8 +166,13 @@ namespace LanBridgeServer
 	void parseHost(const std::string& request, std::string& host, std::string& port)
 	{
 		doParseHost(request, host, port);
-		if(g_HostMap.count(host))
-			host = g_HostMap[host];
+
+		{
+			boost::mutex::scoped_lock lock(s_HostMapMutex);
+
+			if(g_HostMap.count(host))
+				host = g_HostMap[host];
+		}
 	}
 
 	std::string	translateHeaders(const std::string& request)
