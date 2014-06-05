@@ -82,7 +82,7 @@ namespace LanBridgeServer
 				bool result = boost::regex_match(sline, what, boost::regex("(\\S+)\\s+(\\S+).*"));
 				if(result && what.size() >= 3)
 				{
-					g_HostMap.insert(std::make_pair(trimString(what[2].str()), what[1].str()));
+					g_HostMap.insert(std::make_pair(what[2].str().c_str(), what[1].str().c_str()));
 				}
 			}
 
