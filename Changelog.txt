@@ -9,6 +9,11 @@ TODO:
 
 
 
+2017.6.4	K.L.	<k.l.lambda@gmail.com>
+
+	+	TcpBridge: projects setup.
+
+
 2014.6.5	K.L.	<k.l.lambda@gmail.com>
 
 	>	src\BridgeServer.cpp: fixed host map index error.

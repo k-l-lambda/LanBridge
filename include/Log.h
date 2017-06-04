@@ -97,6 +97,13 @@ private:
 		{
 		};
 
+		Shell(const Shell& s)
+			: m_Stream(s.m_Stream)
+			, m_StreamLock(s.m_StreamLock)
+			, m_Level(s.m_Level)
+		{
+		};
+
 		~Shell()
 		{
 			Log::getInstance().flush(m_Level, m_Stream->str());
