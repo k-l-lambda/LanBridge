@@ -99,7 +99,7 @@ namespace LanBridgeClient
 		std::ofstream&	get(const std::string& id)
 		{
 			if(!m_StreamMap.count(id))
-				m_StreamMap.insert(std::make_pair(id, new std::ofstream(("logs\\" + id + ".log").data(), std::ios::app)));
+				m_StreamMap.insert(std::make_pair(id, boost::shared_ptr<std::ofstream>(new std::ofstream(("logs\\" + id + ".log").data(), std::ios::app))));
 
 			return *(m_StreamMap[id]);
 		};
