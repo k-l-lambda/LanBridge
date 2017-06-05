@@ -11,13 +11,6 @@
 
 namespace VideoBridge
 {
-	std::string getLine(const char* data, size_t length)
-	{
-		const size_t linelen = size_t(std::find(data, data + length, '\n') - data);
-
-		return std::string(data, linelen);
-	}
-
 	::RECT getDesktopRect()
 	{
 		::HWND hwnd = ::GetDesktopWindow();
