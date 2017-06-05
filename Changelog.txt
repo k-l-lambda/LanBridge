@@ -11,6 +11,7 @@ TODO:
 
 2017.6.5	K.L.	<k.l.lambda@gmail.com>
 
+	+	TcpBridge: TcpClient added.
 	+	TcpBridge: TcpServer added.
 
 

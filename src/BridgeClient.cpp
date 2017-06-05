@@ -328,6 +328,10 @@ namespace LanBridgeClient
 			{
 				pitcher.reset(new MemoryBridge::Pitcher(vm["memory_pitcher_repository"].as<std::string>()));
 			}
+			else if(pitchertype == "TcpServer")
+			{
+				// TODO:
+			}
 			else
 				throw std::runtime_error("unknown pitcher: " + pitchertype);
 
@@ -351,8 +355,21 @@ namespace LanBridgeClient
 			{
 				catcher.reset(new MemoryBridge::Catcher(s_PackLength, interval, vm["memory_catcher_repository"].as<std::string>()));
 			}
+			else if(catchertype == "TcpServer")
+			{
+				// TODO:
+			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);
+
+			if(vm.count("tcp_server_port"))
+			{
+				const unsigned short port = vm["tcp_server_port"].as<unsigned short>();
+				const std::string password = vm["tcp_server_password"].as<std::string>();
+
+				boost::shared_ptr<TcpServerBridge::TcpServer>& server = TcpServerBridge::TcpServer::instance();
+				server.reset(new TcpServerBridge::TcpServer(port, password));
+			}
 
 			g_Bridge.reset(new Bridge(pitcher, catcher));
 
