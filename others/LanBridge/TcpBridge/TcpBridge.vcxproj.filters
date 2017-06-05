@@ -15,7 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TcpServerBridgePitcher.h">
+    <ClCompile Include="TcpServerBridgePitcher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TcpClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TcpClientBridgeCatcher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TcpServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TcpClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TcpClientBridgeCatcher.h">
@@ -24,7 +38,13 @@
     <ClInclude Include="TcpClientBridgePitcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TcpServer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="TcpServerBridgeCatcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TcpServerBridgePitcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

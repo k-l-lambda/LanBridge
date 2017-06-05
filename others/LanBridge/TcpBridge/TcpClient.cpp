@@ -6,6 +6,8 @@
 #include "..\include\Common.h"
 #include "..\include\Log.h"
 
+#include <boost/smart_ptr.hpp>
+
 
 namespace TcpClientBridge
 {
