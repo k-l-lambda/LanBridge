@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>FileSystemBridge</ProjectName>
-    <ProjectGuid>{DF7E7E00-FD2A-4EE4-B8B0-ACA2C66C31AC}</ProjectGuid>
-    <RootNamespace>FileSystemBridge</RootNamespace>
+    <ProjectName>UdpBridge</ProjectName>
+    <ProjectGuid>{497BFFB5-45CE-4355-8B31-88FE49C90592}</ProjectGuid>
+    <RootNamespace>UdpBridge</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -70,12 +70,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FileSystemBridgeCatcher.cpp" />
-    <ClCompile Include="FileSystemBridgePitcher.cpp" />
+    <ClCompile Include="UdpBridgeCatcher.cpp" />
+    <ClCompile Include="UdpBridgePitcher.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileSystemBridgeCatcher.h" />
-    <ClInclude Include="FileSystemBridgePitcher.h" />
+    <ClInclude Include="UdpBridgeCatcher.h" />
+    <ClInclude Include="UdpBridgePitcher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
