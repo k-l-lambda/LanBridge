@@ -9,6 +9,11 @@ TODO:
 
 
 
+2017.6.5	K.L.	<k.l.lambda@gmail.com>
+
+	+	TcpBridge: TcpServer added.
+
+
 2017.6.4	K.L.	<k.l.lambda@gmail.com>
 
 	+	TcpBridge: projects setup.

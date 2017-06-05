@@ -26,6 +26,13 @@ namespace VideoBridge
 	{
 		return ((source + width - 1) / width) * width;
 	}
+
+	inline std::string getLine(const char* data, size_t length)
+	{
+		const size_t linelen = size_t(std::find(data, data + length, '\n') - data);
+
+		return std::string(data, linelen);
+	}
 }
 
 

@@ -39,6 +39,9 @@
 #include "..\MemoryBridge\MemoryBridgeCatcher.h"
 #pragma comment(lib, "MemoryBridge.lib")
 
+#include "..\TcpBridge\TcpServer.h"
+#pragma comment(lib, "TcpBridge.lib")
+
 
 namespace LanBridgeClient
 {
@@ -283,6 +286,8 @@ namespace LanBridgeClient
 			("video_catcher_interval",		po::value<unsigned long>())
 			("memory_pitcher_repository",	po::value<std::string>())
 			("memory_catcher_repository",	po::value<std::string>())
+			("tcp_server_port",				po::value<unsigned short>())
+			("tcp_server_password",			po::value<std::string>()->default_value("LanBridgeTcpBridge"))
 		;
 
 		try
