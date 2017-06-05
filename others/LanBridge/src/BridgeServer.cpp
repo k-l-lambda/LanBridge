@@ -38,6 +38,11 @@
 #include "..\MemoryBridge\MemoryBridgeCatcher.h"
 #pragma comment(lib, "MemoryBridge.lib")
 
+#include "..\TcpBridge\TcpClient.h"
+#include "..\TcpBridge\TcpClientBridgeCatcher.h"
+#include "..\TcpBridge\TcpClientBridgePitcher.h"
+#pragma comment(lib, "TcpBridge.lib")
+
 
 namespace LanBridgeServer
 {
@@ -390,6 +395,9 @@ namespace LanBridgeServer
 			("video_catcher_videoformat",	po::value<int>())
 			("memory_pitcher_repository",	po::value<std::string>())
 			("memory_catcher_repository",	po::value<std::string>())
+			("tcp_client_host",				po::value<std::string>())
+			("tcp_client_port",				po::value<std::string>())
+			("tcp_client_password",			po::value<std::string>()->default_value("LanBridgeTcpBridge"))
 		;
 
 		try
@@ -432,6 +440,10 @@ namespace LanBridgeServer
 			{
 				pitcher.reset(new MemoryBridge::Pitcher(vm["memory_pitcher_repository"].as<std::string>()));
 			}
+			else if(pitchertype == "TcpClient")
+			{
+				// TODO:
+			}
 			else
 				throw std::runtime_error("unknown pitcher: " + pitchertype);
 
@@ -452,14 +464,29 @@ namespace LanBridgeServer
 			{
 				catcher.reset(new MemoryBridge::Catcher(s_PackLength, interval, vm["memory_catcher_repository"].as<std::string>()));
 			}
+			else if(catchertype == "TcpClient")
+			{
+				catcher.reset(new TcpClientBridge::Catcher(s_PackLength, io_service, interval));
+			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);
+
+			if(vm.count("tcp_client_host"))
+			{
+				const std::string host = vm["tcp_client_host"].as<std::string>();
+				const std::string port = vm["tcp_client_port"].as<std::string>();
+				const std::string password = vm["tcp_client_password"].as<std::string>();
+
+				boost::shared_ptr<TcpClientBridge::TcpClient>& client = TcpClientBridge::TcpClient::instance();
+				client.reset(new TcpClientBridge::TcpClient(host, port, password));
+			}
 
 
 			loadHostMap();
 
 			g_Bridge.reset(new Bridge(pitcher, catcher, interval));
-			g_Bridge->acceptConnections(boost::bind(session, boost::ref(io_service), _1));
+			if(catcher)
+				g_Bridge->acceptConnections(boost::bind(session, boost::ref(io_service), _1));
 		}
 		catch (std::exception& e)
 		{

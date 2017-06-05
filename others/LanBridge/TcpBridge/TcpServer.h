@@ -26,8 +26,6 @@ namespace TcpServerBridge
 
 	public:
 		TcpServer(unsigned short port, const std::string& password);
-
-	private:
 		~TcpServer();
 
 	private:
