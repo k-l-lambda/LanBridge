@@ -26,17 +26,19 @@ namespace TcpClientBridge
 		}
 		catch(const boost::system::system_error& e)
 		{
-			Log::shell(Log::Msg_Warning) << "TcpClient connect failed: " << e.what();
+			Log::shell(Log::Msg_Warning) << "TcpClient resolve failed: " << e.what();
+
+			throw e;
 		}
 
-		socket_ptr sock(new tcp::socket(io_service));
+		m_Socket.reset(new tcp::socket(io_service));
 
 		for(; iterator != tcp::resolver::iterator(); ++iterator)
 		{
 			try
 			{
-				sock->connect(*iterator);
-				assert(sock->is_open());
+				m_Socket->connect(*iterator);
+				assert(m_Socket->is_open());
 
 				Log::shell(Log::Msg_SetUp) << "TcpClient connection of \"" << host << ":" << port << "\" setup.";
 
@@ -45,7 +47,13 @@ namespace TcpClientBridge
 			catch(const std::exception& e)
 			{
 				Log::shell(Log::Msg_Warning) << "TcpClient request connect failed: " << e.what();
+
+				throw e;
 			}
 		}
+
+		// send password
+		std::string buffer = password + "\n";
+		boost::asio::write(*m_Socket, boost::asio::buffer(buffer.c_str(), buffer.length()));
 	}
 }

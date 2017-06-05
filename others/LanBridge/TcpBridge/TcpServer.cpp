@@ -27,6 +27,14 @@ namespace TcpServerBridge
 	void TcpServer::session(socket_ptr sock)
 	{
 		Log::shell(Log::Msg_Information) << "TcpServer session start, from: " << sock->remote_endpoint().address().to_string();
+
+		char data[s_PackLength];
+		boost::system::error_code error;
+		size_t length = sock->read_some(boost::asio::buffer(data, s_PackLength), error);
+
+		const std::string password = getLine(data, length);
+
+		Log::shell(Log::Msg_Information) << "TcpServer password got: " << password;
 	}
 
 	void TcpServer::accept()

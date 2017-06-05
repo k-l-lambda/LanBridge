@@ -22,6 +22,11 @@ namespace TcpClientBridge
 
 	public:
 		TcpClient(const std::string& host, const std::string& port, const std::string& password);
+
+	private:
+		typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
+
+		socket_ptr		m_Socket;
 	};
 }
 
