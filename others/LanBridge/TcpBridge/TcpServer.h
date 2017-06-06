@@ -28,6 +28,8 @@ namespace TcpServerBridge
 		TcpServer(unsigned short port, const std::string& password);
 		~TcpServer();
 
+		socket_ptr	getSocket() const	{return m_Socket;};
+
 	private:
 		void accept();
 		void session(socket_ptr sock);

@@ -9,7 +9,14 @@ TODO:
 
 
 
+2017.6.6	K.L.	<k.l.lambda@gmail.com>
+
+	+	TcpServerBridgePitcher: implemented.
+
+
 2017.6.5	K.L.	<k.l.lambda@gmail.com>
+
+	+	TcpBridge/TcpClient: send password.
 
 	+	TcpBridge: TcpClient added.
 	+	TcpBridge: TcpServer added.

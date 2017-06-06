@@ -90,7 +90,7 @@ namespace LanBridgeClient
 	}
 
 
-	const unsigned long	s_DefaultInterval = 400;
+	const unsigned long	s_DefaultInterval = 100;
 
 	static std::ofstream s_RequestsLog;
 	static std::ofstream s_ResponsesLog;
