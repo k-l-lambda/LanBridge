@@ -22,14 +22,19 @@ namespace TcpBridge
 			boost::scoped_array<char> data(new char[header.length() + length]);
 			std::memcpy(data.get(), header.data(), header.length());
 			std::memcpy(data.get() + header.length(), buffer, length);
-			boost::asio::write(*m_Socket, boost::asio::buffer(data.get(), header.length() + length));
 
-			/*boost::asio::write(*m_Socket, boost::asio::buffer(header.c_str(), header.length()));
-			boost::asio::write(*m_Socket, boost::asio::buffer(buffer, length));*/
+			{
+				boost::mutex::scoped_lock lock(m_SendMutex);
 
-			Log::shell(Log::Msg_Information) << "TcpBridgePitcher	data for [" << connection_id << "] sent.";
+				boost::asio::write(*m_Socket, boost::asio::buffer(data.get(), header.length() + length));
 
-			::Sleep(m_Interval);
+				/*boost::asio::write(*m_Socket, boost::asio::buffer(header.c_str(), header.length()));
+				boost::asio::write(*m_Socket, boost::asio::buffer(buffer, length));*/
+
+				Log::shell(Log::Msg_Information) << "TcpBridgePitcher	data for [" << connection_id << "] sent.";
+
+				::Sleep(m_Interval);
+			}
 		}
 	}
 }

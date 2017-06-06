@@ -37,7 +37,12 @@ namespace TcpBridge
 					DataBufferPtr data = queue.front();
 					assert(data);
 					if(!data->empty())
-						std::memcpy(buffer, &(data->front()), data->size());
+					{
+						if(data->size() > m_PackSize)
+							Log::shell(Log::Msg_Information) << "TcpBridgeCatcher	data size (" << data->size() << ") is out of pack size (" << m_PackSize << ").";
+
+						std::memcpy(buffer, &(data->front()), std::min(data->size(), m_PackSize));
+					}
 
 					queue.pop_front();
 
@@ -69,11 +74,11 @@ namespace TcpBridge
 		{
 			if(m_Socket)
 			{
-				static const size_t max_length = 0x2000;
+				static const size_t s_HeaderSize = 0x80;
 
-				char read_buf[max_length];
+				boost::shared_array<char> data(new char[m_PackSize + s_HeaderSize]);
 				boost::system::error_code error;
-				size_t length = m_Socket->read_some(boost::asio::buffer(read_buf, max_length), error);
+				size_t length = m_Socket->read_some(boost::asio::buffer(data.get(), m_PackSize + s_HeaderSize), error);
 				if(error == boost::asio::error::eof || length == 0)
 				{
 					{
@@ -88,12 +93,12 @@ namespace TcpBridge
 					continue;
 				}
 
-				Log::shell(Log::Msg_Information) << "TcpBridgeCatcher	" << length << " bytes received.";
-
-				const std::string header = getLine(read_buf, length);
+				const std::string header = getLine(data.get(), length);
 				const std::string& connection_id = header;
-				const char* body = read_buf + header.length() + 1;
+				const char* body = data.get() + header.length() + 1;
 				size_t body_length = length - std::min((header.length() + 1), length);
+
+				Log::shell(Log::Msg_Information) << "TcpBridgeCatcher	[" << header.c_str() << "]	" << length << " bytes received.";
 
 				DataBufferPtr buffer(body_length ? new DataBuffer(body, body + body_length) : new DataBuffer);
 				assert(buffer);
