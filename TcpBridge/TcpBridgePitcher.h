@@ -28,6 +28,8 @@ namespace TcpBridge
 		const socket_ptr&			m_Socket;
 
 		unsigned long				m_Interval;
+
+		boost::mutex				m_SendMutex;
 	};
 }
 
