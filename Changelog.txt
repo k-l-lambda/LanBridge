@@ -11,6 +11,10 @@ TODO:
 
 2017.6.6	K.L.	<k.l.lambda@gmail.com>
 
+	*	TcpBridge example:
+			LanBridge --usage=client --port=8102 --catcher=TCP --pitcher=TCP --tcp_server_port=9001
+			LanBridge --usage=server --catcher=TCP --pitcher=TCP  --tcp_client_host=localhost --tcp_client_port=9001
+
 	+	TcpBridgeCatcher: implemented.
 
 	*!	io_service dead may result in socket end.
