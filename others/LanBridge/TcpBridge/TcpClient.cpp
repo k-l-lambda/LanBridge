@@ -9,6 +9,9 @@
 #include <boost/smart_ptr.hpp>
 
 
+extern boost::asio::io_service io_service;
+
+
 namespace TcpBridge
 {
 	TcpClient::TcpClient(const std::string& host, const std::string& port, const std::string& password)
@@ -23,7 +26,7 @@ namespace TcpBridge
 	{
 		Log::shell(Log::Msg_Information) << "TcpClient startup, try to connect: " << m_Host << ":" << m_Port << ", " << m_Password;
 
-		boost::asio::io_service io_service;
+		//boost::asio::io_service io_service;
 
 		tcp::resolver resolver(io_service);
 		boost::scoped_ptr<tcp::resolver::query> query;

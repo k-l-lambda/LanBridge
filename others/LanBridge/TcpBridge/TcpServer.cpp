@@ -7,6 +7,9 @@
 #include "..\include\Log.h"
 
 
+extern boost::asio::io_service io_service;
+
+
 namespace TcpBridge
 {
 	TcpServer::TcpServer(unsigned short port, const std::string& password)
@@ -40,15 +43,19 @@ namespace TcpBridge
 		{
 			m_Socket = sock;
 
-			Log::shell(Log::Msg_Information) << "TcpServer password is right, TCP bridge setup.";
+			Log::shell(Log::Msg_SetUp) << "TcpServer password is right, TCP bridge setup.";
 		}
 		else
+		{
+			sock->close();
+
 			Log::shell(Log::Msg_Warning) << "TcpServer password is wrong, connection dropped.";
+		}
 	}
 
 	void TcpServer::accept()
 	{
-		boost::asio::io_service io_service;
+		//boost::asio::io_service io_service;
 
 		tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), m_Port));
 		for(;;)

@@ -11,6 +11,10 @@ TODO:
 
 2017.6.6	K.L.	<k.l.lambda@gmail.com>
 
+	+	TcpBridgeCatcher: implemented.
+
+	*!	io_service dead may result in socket end.
+
 	>	TcpBridge: merged TcpClientBridge and TcpServerBridge.
 
 	+	TcpServerBridgePitcher: implemented.

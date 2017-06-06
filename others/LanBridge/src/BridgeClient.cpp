@@ -40,8 +40,12 @@
 #pragma comment(lib, "MemoryBridge.lib")
 
 #include "..\TcpBridge\TcpServer.h"
+#include "..\TcpBridge\TcpBridgeCatcher.h"
+#include "..\TcpBridge\TcpBridgePitcher.h"
 #pragma comment(lib, "TcpBridge.lib")
 
+
+boost::asio::io_service io_service;
 
 namespace LanBridgeClient
 {
@@ -127,7 +131,7 @@ namespace LanBridgeClient
 		{
 			while(sock->is_open())
 			{
-				const std::string response_filename = g_ReponsesDir + connection_id + ".response";
+				//const std::string response_filename = g_ReponsesDir + connection_id + ".response";
 				{
 					char response_buffer[s_PackLength];
 					const size_t length = g_Bridge->read(connection_id, response_buffer);
@@ -320,8 +324,6 @@ namespace LanBridgeClient
 			const std::string pitchertype = vm.count("pitcher") ? vm["pitcher"].as<std::string>() : "FileSystem";
 			const std::string catchertype = vm.count("catcher") ? vm["catcher"].as<std::string>() : "FileSystem";
 
-			boost::asio::io_service io_service;
-
 			PitcherPtr pitcher;
 			if(pitchertype == "FileSystem")
 				pitcher.reset(new FileSystemBridge::Pitcher(station + "\\requests\\"));
@@ -337,9 +339,12 @@ namespace LanBridgeClient
 			{
 				pitcher.reset(new MemoryBridge::Pitcher(vm["memory_pitcher_repository"].as<std::string>()));
 			}
-			else if(pitchertype == "TcpServer")
+			else if(pitchertype == "TCP")
 			{
-				// TODO:
+				if(!TcpBridge::TcpServer::instance())
+					throw std::runtime_error("TcpServer missing, pitcher create failed.");
+
+				pitcher.reset(new TcpBridge::Pitcher(TcpBridge::TcpServer::instance()->getSocket(), interval));
 			}
 			else
 				throw std::runtime_error("unknown pitcher: " + pitchertype);
@@ -364,9 +369,12 @@ namespace LanBridgeClient
 			{
 				catcher.reset(new MemoryBridge::Catcher(s_PackLength, interval, vm["memory_catcher_repository"].as<std::string>()));
 			}
-			else if(catchertype == "TcpServer")
+			else if(catchertype == "TCP")
 			{
-				// TODO:
+				if(!TcpBridge::TcpServer::instance())
+					throw std::runtime_error("TcpServer missing, catcher create failed.");
+
+				catcher.reset(new TcpBridge::Catcher(TcpBridge::TcpServer::instance()->getSocket(), s_PackLength, interval));
 			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);

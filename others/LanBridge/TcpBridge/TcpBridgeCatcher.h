@@ -8,6 +8,7 @@
 #include "..\include\Bridge.h"
 
 #include <boost/asio.hpp>
+#include <boost/smart_ptr.hpp>
 
 
 namespace TcpBridge
@@ -27,10 +28,27 @@ namespace TcpBridge
 		virtual void acceptConnection(const AcceptorFunctor& acceptor);
 
 	private:
-		const socket_ptr&					m_Socket;
+		void receive();
+
+	private:
+		const socket_ptr&			m_Socket;
 
 		size_t						m_PackSize;
 		unsigned long				m_Interval;
+
+		typedef	std::vector<char>						DataBuffer;
+		typedef	boost::shared_ptr<DataBuffer>			DataBufferPtr;
+		typedef	std::deque<DataBufferPtr>				DataQueue;
+		typedef	std::map<std::string, DataQueue>		ConnectionDataMap;
+
+		ConnectionDataMap			m_ConnectionDataMap;
+		boost::mutex				m_DataMutex;
+
+		std::set<std::string>		m_NewConnections;
+		boost::mutex				m_NewConnectionsMutex;
+
+		bool						m_End;
+		boost::thread				m_ReceiveThread;
 	};
 }
 

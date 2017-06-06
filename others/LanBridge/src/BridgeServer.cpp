@@ -44,6 +44,9 @@
 #pragma comment(lib, "TcpBridge.lib")
 
 
+extern boost::asio::io_service io_service;
+
+
 namespace LanBridgeServer
 {
 	using boost::asio::ip::tcp;
@@ -369,7 +372,7 @@ namespace LanBridgeServer
 	}
 
 
-	static boost::asio::io_service io_service;
+	//static boost::asio::io_service io_service;
 
 
 	int main(int argc, char* argv[])
@@ -450,9 +453,12 @@ namespace LanBridgeServer
 			{
 				pitcher.reset(new MemoryBridge::Pitcher(vm["memory_pitcher_repository"].as<std::string>()));
 			}
-			else if(pitchertype == "TcpClient")
+			else if(pitchertype == "TCP")
 			{
-				// TODO:
+				if(!TcpBridge::TcpClient::instance())
+					throw std::runtime_error("TcpClient missing, pitcher create failed.");
+
+				pitcher.reset(new TcpBridge::Pitcher(TcpBridge::TcpClient::instance()->getSocket(), interval));
 			}
 			else
 				throw std::runtime_error("unknown pitcher: " + pitchertype);
@@ -474,8 +480,11 @@ namespace LanBridgeServer
 			{
 				catcher.reset(new MemoryBridge::Catcher(s_PackLength, interval, vm["memory_catcher_repository"].as<std::string>()));
 			}
-			else if(catchertype == "TcpClient")
+			else if(catchertype == "TCP")
 			{
+				if(!TcpBridge::TcpClient::instance())
+					throw std::runtime_error("TcpClient missing, catcher create failed.");
+
 				catcher.reset(new TcpBridge::Catcher(TcpBridge::TcpClient::instance()->getSocket(), s_PackLength, interval));
 			}
 			else
