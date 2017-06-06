@@ -386,7 +386,6 @@ namespace LanBridgeServer
 		po::options_description desc("Allowed options");
 		desc.add_options()
 			("interval",	po::value<unsigned long>()->implicit_value(400),	"directory lookup interval")
-			("usage",		po::value<std::string>())
 			("pitcher",		po::value<std::string>())
 			("catcher",		po::value<std::string>())
 			("station",		po::value<std::string>(),							"data transfer station")
@@ -410,7 +409,7 @@ namespace LanBridgeServer
 		try
 		{
 			po::variables_map vm;
-			po::store(po::parse_command_line(argc, argv, desc), vm);
+			po::store(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
 			po::notify(vm);
 
 			unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : 60;

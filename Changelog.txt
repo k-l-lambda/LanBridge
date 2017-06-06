@@ -11,6 +11,8 @@ TODO:
 
 2017.6.6	K.L.	<k.l.lambda@gmail.com>
 
+	>	main: added option of log_level.
+
 	*	TcpBridge example:
 			LanBridge --usage=client --port=8102 --catcher=TCP --pitcher=TCP --tcp_server_port=9001
 			LanBridge --usage=server --catcher=TCP --pitcher=TCP  --tcp_client_host=localhost --tcp_client_port=9001
