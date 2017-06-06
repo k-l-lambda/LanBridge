@@ -277,7 +277,6 @@ namespace LanBridgeClient
 			("log_requests",				po::value<bool>()->implicit_value(true))
 			("log_response",				po::value<bool>()->implicit_value(true))
 			("log_by_session",				po::value<bool>()->implicit_value(true))
-			("usage",						po::value<std::string>())
 			("pitcher",						po::value<std::string>())
 			("catcher",						po::value<std::string>())
 			("station",						po::value<std::string>(),	"data transfer station")
@@ -297,7 +296,7 @@ namespace LanBridgeClient
 		try
 		{
 			po::variables_map vm;
-			po::store(po::parse_command_line(argc, argv, desc), vm);
+			po::store(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
 			po::notify(vm);
 
 			const short port = vm["port"].as<short>();
