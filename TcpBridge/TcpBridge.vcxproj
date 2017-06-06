@@ -19,18 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TcpBridgeCatcher.cpp" />
+    <ClCompile Include="TcpBridgePitcher.cpp" />
     <ClCompile Include="TcpClient.cpp" />
-    <ClCompile Include="TcpClientBridgeCatcher.cpp" />
     <ClCompile Include="TcpServer.cpp" />
-    <ClCompile Include="TcpServerBridgePitcher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TcpBridgeCatcher.h" />
+    <ClInclude Include="TcpBridgePitcher.h" />
     <ClInclude Include="TcpClient.h" />
-    <ClInclude Include="TcpClientBridgeCatcher.h" />
-    <ClInclude Include="TcpClientBridgePitcher.h" />
     <ClInclude Include="TcpServer.h" />
-    <ClInclude Include="TcpServerBridgeCatcher.h" />
-    <ClInclude Include="TcpServerBridgePitcher.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4586B20A-4BB3-48C5-911B-0A56859AE07A}</ProjectGuid>
