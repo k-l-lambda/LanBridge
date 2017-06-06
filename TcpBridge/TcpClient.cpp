@@ -12,8 +12,16 @@
 namespace TcpClientBridge
 {
 	TcpClient::TcpClient(const std::string& host, const std::string& port, const std::string& password)
+		: m_Host(host)
+		, m_Port(port)
+		, m_Password(password)
 	{
-		Log::shell(Log::Msg_Information) << "TcpClient startup, try to connect: " << host << ":" << port;
+		connect();
+	}
+
+	void TcpClient::connect()
+	{
+		Log::shell(Log::Msg_Information) << "TcpClient startup, try to connect: " << m_Host << ":" << m_Port << ", " << m_Password;
 
 		boost::asio::io_service io_service;
 
@@ -23,7 +31,7 @@ namespace TcpClientBridge
 
 		try
 		{
-			query.reset(new tcp::resolver::query(tcp::v4(), host, port));
+			query.reset(new tcp::resolver::query(tcp::v4(), m_Host, m_Port));
 			iterator = resolver.resolve(*query);
 		}
 		catch(const boost::system::system_error& e)
@@ -42,7 +50,7 @@ namespace TcpClientBridge
 				m_Socket->connect(*iterator);
 				assert(m_Socket->is_open());
 
-				Log::shell(Log::Msg_SetUp) << "TcpClient connection of \"" << host << ":" << port << "\" setup.";
+				Log::shell(Log::Msg_SetUp) << "TcpClient connection of \"" << m_Host << ":" << m_Port << "\" setup.";
 
 				break;
 			}
@@ -55,7 +63,7 @@ namespace TcpClientBridge
 		}
 
 		// send password
-		std::string buffer = password + "\n";
+		std::string buffer = m_Password + "\n";
 		boost::asio::write(*m_Socket, boost::asio::buffer(buffer.c_str(), buffer.length()));
 	}
 }

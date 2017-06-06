@@ -23,6 +23,10 @@ namespace TcpClientBridge
 		virtual size_t read(const std::string& connection_id, char* buffer);
 
 		virtual void acceptConnection(const AcceptorFunctor& acceptor);
+
+	private:
+		size_t						m_PackSize;
+		unsigned long				m_Interval;
 	};
 }
 

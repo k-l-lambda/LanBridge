@@ -7,6 +7,8 @@
 namespace TcpClientBridge
 {
 	Catcher::Catcher(size_t packsize, boost::asio::io_service& io_service, unsigned long interval)
+		: m_PackSize(packsize)
+		, m_Interval(interval)
 	{
 	}
 

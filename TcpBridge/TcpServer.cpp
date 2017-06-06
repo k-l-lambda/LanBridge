@@ -35,6 +35,15 @@ namespace TcpServerBridge
 		const std::string password = getLine(data, length);
 
 		Log::shell(Log::Msg_Information) << "TcpServer password got: " << password;
+
+		if(password == m_Password)
+		{
+			m_Socket = sock;
+
+			Log::shell(Log::Msg_Information) << "TcpServer password is right, TCP bridge setup.";
+		}
+		else
+			Log::shell(Log::Msg_Warning) << "TcpServer password is wrong, connection dropped.";
 	}
 
 	void TcpServer::accept()
