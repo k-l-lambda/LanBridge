@@ -39,7 +39,7 @@ namespace TcpBridge
 					if(!data->empty())
 					{
 						if(data->size() > m_PackSize)
-							Log::shell(Log::Msg_Information) << "TcpBridgeCatcher	data size (" << data->size() << ") is out of pack size (" << m_PackSize << ").";
+							Log::shell(Log::Msg_Warning) << "TcpBridgeCatcher	data size (" << data->size() << ") is out of pack size (" << m_PackSize << ").";
 
 						std::memcpy(buffer, &(data->front()), std::min(data->size(), m_PackSize));
 					}
