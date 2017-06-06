@@ -308,6 +308,15 @@ namespace LanBridgeClient
 			if(g_LogResponse)
 				s_ResponsesLog.open("responses.log", std::ios::app);
 
+			if(vm.count("tcp_server_port"))
+			{
+				const unsigned short port = vm["tcp_server_port"].as<unsigned short>();
+				const std::string password = vm["tcp_server_password"].as<std::string>();
+
+				boost::shared_ptr<TcpBridge::TcpServer>& server = TcpBridge::TcpServer::instance();
+				server.reset(new TcpBridge::TcpServer(port, password));
+			}
+
 			const std::string pitchertype = vm.count("pitcher") ? vm["pitcher"].as<std::string>() : "FileSystem";
 			const std::string catchertype = vm.count("catcher") ? vm["catcher"].as<std::string>() : "FileSystem";
 
@@ -361,15 +370,6 @@ namespace LanBridgeClient
 			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);
-
-			if(vm.count("tcp_server_port"))
-			{
-				const unsigned short port = vm["tcp_server_port"].as<unsigned short>();
-				const std::string password = vm["tcp_server_password"].as<std::string>();
-
-				boost::shared_ptr<TcpServerBridge::TcpServer>& server = TcpServerBridge::TcpServer::instance();
-				server.reset(new TcpServerBridge::TcpServer(port, password));
-			}
 
 			g_Bridge.reset(new Bridge(pitcher, catcher));
 

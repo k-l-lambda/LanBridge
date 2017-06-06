@@ -1,13 +1,14 @@
 
 #define	_WIN32_WINNT	0x0501	// Windows XP at lowest
 
-#include "TcpClientBridgeCatcher.h"
+#include "TcpBridgeCatcher.h"
 
 
-namespace TcpClientBridge
+namespace TcpBridge
 {
-	Catcher::Catcher(size_t packsize, boost::asio::io_service& io_service, unsigned long interval)
-		: m_PackSize(packsize)
+	Catcher::Catcher(const socket_ptr& socket, size_t packsize, unsigned long interval)
+		: m_Socket(socket)
+		, m_PackSize(packsize)
 		, m_Interval(interval)
 	{
 	}

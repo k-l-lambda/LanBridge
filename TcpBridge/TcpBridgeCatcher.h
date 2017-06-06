@@ -10,13 +10,15 @@
 #include <boost/asio.hpp>
 
 
-namespace TcpClientBridge
+namespace TcpBridge
 {
 	class Catcher
 		: public ICatcher
 	{
+		typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
+
 	public:
-		Catcher(size_t packsize, boost::asio::io_service& io_service, unsigned long interval);
+		Catcher(const socket_ptr& socket, size_t packsize, unsigned long interval);
 		~Catcher();
 
 	private:
@@ -25,6 +27,8 @@ namespace TcpClientBridge
 		virtual void acceptConnection(const AcceptorFunctor& acceptor);
 
 	private:
+		const socket_ptr&					m_Socket;
+
 		size_t						m_PackSize;
 		unsigned long				m_Interval;
 	};

@@ -9,7 +9,7 @@
 #include <boost/smart_ptr.hpp>
 
 
-namespace TcpClientBridge
+namespace TcpBridge
 {
 	TcpClient::TcpClient(const std::string& host, const std::string& port, const std::string& password)
 		: m_Host(host)
