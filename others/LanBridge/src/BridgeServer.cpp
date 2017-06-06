@@ -409,7 +409,7 @@ namespace LanBridgeServer
 			po::store(po::parse_command_line(argc, argv, desc), vm);
 			po::notify(vm);
 
-			unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : 400;
+			unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : 60;
 
 			if(vm.count("tcp_client_host"))
 			{
