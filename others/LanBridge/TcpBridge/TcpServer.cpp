@@ -7,7 +7,7 @@
 #include "..\include\Log.h"
 
 
-namespace TcpServerBridge
+namespace TcpBridge
 {
 	TcpServer::TcpServer(unsigned short port, const std::string& password)
 		: m_Port(port)

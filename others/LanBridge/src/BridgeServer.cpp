@@ -39,8 +39,8 @@
 #pragma comment(lib, "MemoryBridge.lib")
 
 #include "..\TcpBridge\TcpClient.h"
-#include "..\TcpBridge\TcpClientBridgeCatcher.h"
-#include "..\TcpBridge\TcpClientBridgePitcher.h"
+#include "..\TcpBridge\TcpBridgeCatcher.h"
+#include "..\TcpBridge\TcpBridgePitcher.h"
 #pragma comment(lib, "TcpBridge.lib")
 
 
@@ -408,6 +408,16 @@ namespace LanBridgeServer
 
 			unsigned long interval = vm.count("interval") ? vm["interval"].as<unsigned long>() : 400;
 
+			if(vm.count("tcp_client_host"))
+			{
+				const std::string host = vm["tcp_client_host"].as<std::string>();
+				const std::string port = vm["tcp_client_port"].as<std::string>();
+				const std::string password = vm["tcp_client_password"].as<std::string>();
+
+				boost::shared_ptr<TcpBridge::TcpClient>& client = TcpBridge::TcpClient::instance();
+				client.reset(new TcpBridge::TcpClient(host, port, password));
+			}
+
 			const std::string pitchertype = vm.count("pitcher") ? vm["pitcher"].as<std::string>() : "FileSystem";
 			const std::string catchertype = vm.count("catcher") ? vm["catcher"].as<std::string>() : "FileSystem";
 
@@ -466,20 +476,10 @@ namespace LanBridgeServer
 			}
 			else if(catchertype == "TcpClient")
 			{
-				catcher.reset(new TcpClientBridge::Catcher(s_PackLength, io_service, interval));
+				catcher.reset(new TcpBridge::Catcher(TcpBridge::TcpClient::instance()->getSocket(), s_PackLength, interval));
 			}
 			else
 				throw std::runtime_error("unknown catcher: " + catchertype);
-
-			if(vm.count("tcp_client_host"))
-			{
-				const std::string host = vm["tcp_client_host"].as<std::string>();
-				const std::string port = vm["tcp_client_port"].as<std::string>();
-				const std::string password = vm["tcp_client_password"].as<std::string>();
-
-				boost::shared_ptr<TcpClientBridge::TcpClient>& client = TcpClientBridge::TcpClient::instance();
-				client.reset(new TcpClientBridge::TcpClient(host, port, password));
-			}
 
 
 			loadHostMap();

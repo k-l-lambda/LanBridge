@@ -11,6 +11,8 @@ TODO:
 
 2017.6.6	K.L.	<k.l.lambda@gmail.com>
 
+	>	TcpBridge: merged TcpClientBridge and TcpServerBridge.
+
 	+	TcpServerBridgePitcher: implemented.
 
 

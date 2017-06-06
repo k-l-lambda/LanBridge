@@ -9,7 +9,7 @@
 #include <boost/thread/mutex.hpp>
 
 
-namespace TcpClientBridge
+namespace TcpBridge
 {
 	class TcpClient
 	{
@@ -25,7 +25,7 @@ namespace TcpClientBridge
 	public:
 		TcpClient(const std::string& host, const std::string& port, const std::string& password);
 
-		socket_ptr	getSocket() const	{return m_Socket;};
+		const socket_ptr&	getSocket() const	{return m_Socket;};
 
 	private:
 		void connect();

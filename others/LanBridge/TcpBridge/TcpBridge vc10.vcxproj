@@ -120,17 +120,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TcpClient.h" />
-    <ClInclude Include="TcpClientBridgeCatcher.h" />
-    <ClInclude Include="TcpClientBridgePitcher.h" />
+    <ClInclude Include="TcpBridgeCatcher.h" />
     <ClInclude Include="TcpServer.h" />
-    <ClInclude Include="TcpServerBridgeCatcher.h" />
-    <ClInclude Include="TcpServerBridgePitcher.h" />
+    <ClInclude Include="TcpBridgePitcher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TcpClient.cpp" />
-    <ClCompile Include="TcpClientBridgeCatcher.cpp" />
+    <ClCompile Include="TcpBridgeCatcher.cpp" />
     <ClCompile Include="TcpServer.cpp" />
-    <ClCompile Include="TcpServerBridgePitcher.cpp" />
+    <ClCompile Include="TcpBridgePitcher.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
