@@ -328,6 +328,10 @@ namespace LanBridgeServer
 						{
 							Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	request connect failed: " << e.what();
 						}
+						catch(const boost::system::error_code& e)
+						{
+							Log::shell(Log::Msg_Warning) << "[" << connection_id << "]	request connect failed: error_code: " << e.message();
+						}
 					}
 				}
 
