@@ -218,7 +218,8 @@ namespace LanBridgeClient
 						sessionLog().close(connection_id);
 					}
 
-					break;
+					if(inputthread.timed_join(boost::posix_time::seconds(0)))
+						break;
 				}
 				else if(error)
 					throw boost::system::system_error(error); // Some other error.
