@@ -5,6 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{E3991B59-9DB7-4949-BBC1-9642C1320E5C}"
 	ProjectSection(SolutionItems) = preProject
+		include\Base64Helper.h = include\Base64Helper.h
 		include\Bridge.h = include\Bridge.h
 		include\Common.h = include\Common.h
 		include\Log.h = include\Log.h
