@@ -9,6 +9,11 @@ TODO:
 
 
 
+2017.10.12	K.L.	<k.l.lambda@gmail.com>
+
+	+	Base64Helper added.
+
+
 2017.6.6	K.L.	<k.l.lambda@gmail.com>
 
 	>	main: added option of log_level.

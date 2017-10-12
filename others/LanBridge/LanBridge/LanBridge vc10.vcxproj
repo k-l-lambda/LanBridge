@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Base64Helper.cpp" />
     <ClCompile Include="..\src\BridgeClient.cpp" />
     <ClCompile Include="..\src\BridgeServer.cpp" />
     <ClCompile Include="main.cpp" />
