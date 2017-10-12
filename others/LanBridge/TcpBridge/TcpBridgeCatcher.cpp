@@ -4,6 +4,7 @@
 #include "TcpBridgeCatcher.h"
 
 #include "..\include\Common.h"
+#include "..\include\Base64Helper.h"
 
 
 namespace TcpBridge
@@ -78,7 +79,7 @@ namespace TcpBridge
 
 				boost::shared_array<char> data(new char[m_PackSize + s_HeaderSize]);
 				boost::system::error_code error;
-				size_t length = m_Socket->read_some(boost::asio::buffer(data.get(), m_PackSize + s_HeaderSize), error);
+				size_t length = m_Socket->read_some(boost::asio::buffer(data.get(), m_PackSize), error);
 				if(error == boost::asio::error::eof || length == 0)
 				{
 					{
@@ -93,7 +94,11 @@ namespace TcpBridge
 					continue;
 				}
 
-				const std::string header = getLine(data.get(), length);
+				m_ReceiveBuffer += std::string(data.get(), length);
+
+				updateReceive();
+
+				/*const std::string header = getLine(data.get(), length);
 				const std::string& connection_id = header;
 				const char* body = data.get() + header.length() + 1;
 				size_t body_length = length - std::min((header.length() + 1), length);
@@ -117,7 +122,7 @@ namespace TcpBridge
 					boost::mutex::scoped_lock lock(m_NewConnectionsMutex);
 
 					m_NewConnections.insert(connection_id);
-				}
+				}*/
 			}
 			else
 			{
@@ -125,6 +130,58 @@ namespace TcpBridge
 
 				::Sleep(m_Interval);
 			}
+		}
+	}
+
+	void Catcher::updateReceive()
+	{
+		if(m_ReceiveBuffer.empty())
+			return;
+
+		const char* tail = m_ReceiveBuffer.c_str() + m_ReceiveBuffer.size();
+		const char* nl = std::find(m_ReceiveBuffer.c_str(), tail, '\n');
+		if(nl >= tail)
+			return;
+
+		size_t length = size_t(nl - m_ReceiveBuffer.c_str());
+
+		if(length == 0)
+			m_CurrentHeader = "";
+		else
+		{
+			const std::string line = m_ReceiveBuffer.substr(0, length);
+
+			if(m_CurrentHeader.empty())
+				m_CurrentHeader = line;
+			else
+			{
+				DataBufferPtr data(new DataBuffer(MUtils::Base64Helper::decode(line)));
+
+				pushConnection(m_CurrentHeader, data);
+			}
+		}
+
+		m_ReceiveBuffer = m_ReceiveBuffer.substr(length + 1);
+
+		updateReceive();
+	}
+
+	void Catcher::pushConnection(const std::string& header, const DataBufferPtr& body)
+	{
+		const std::string& connection_id = header;
+
+		{
+			boost::mutex::scoped_lock lock(m_DataMutex);
+
+			assert(body);
+			m_ConnectionDataMap[connection_id].push_back(body);
+		}
+
+		if(connection_id[0] != '-')
+		{
+			boost::mutex::scoped_lock lock(m_NewConnectionsMutex);
+
+			m_NewConnections.insert(connection_id);
 		}
 	}
 }

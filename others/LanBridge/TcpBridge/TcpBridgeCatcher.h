@@ -18,6 +18,11 @@ namespace TcpBridge
 	{
 		typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
 
+		typedef	std::vector<char>						DataBuffer;
+		typedef	boost::shared_ptr<DataBuffer>			DataBufferPtr;
+		typedef	std::deque<DataBufferPtr>				DataQueue;
+		typedef	std::map<std::string, DataQueue>		ConnectionDataMap;
+
 	public:
 		Catcher(const socket_ptr& socket, size_t packsize, unsigned long interval);
 		~Catcher();
@@ -30,16 +35,14 @@ namespace TcpBridge
 	private:
 		void receive();
 
+		void updateReceive();
+		void pushConnection(const std::string& header, const DataBufferPtr& body);
+
 	private:
 		const socket_ptr&			m_Socket;
 
 		size_t						m_PackSize;
 		unsigned long				m_Interval;
-
-		typedef	std::vector<char>						DataBuffer;
-		typedef	boost::shared_ptr<DataBuffer>			DataBufferPtr;
-		typedef	std::deque<DataBufferPtr>				DataQueue;
-		typedef	std::map<std::string, DataQueue>		ConnectionDataMap;
 
 		ConnectionDataMap			m_ConnectionDataMap;
 		boost::mutex				m_DataMutex;
@@ -49,6 +52,9 @@ namespace TcpBridge
 
 		bool						m_End;
 		boost::thread				m_ReceiveThread;
+
+		std::string					m_ReceiveBuffer;
+		std::string					m_CurrentHeader;
 	};
 }
 

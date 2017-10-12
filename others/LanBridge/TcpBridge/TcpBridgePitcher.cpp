@@ -4,6 +4,8 @@
 #include "TcpBridgePitcher.h"
 #include "TcpServer.h"
 
+#include "..\include\Base64Helper.h"
+
 
 namespace TcpBridge
 {
@@ -17,19 +19,18 @@ namespace TcpBridge
 	{
 		if(m_Socket)
 		{
-			const std::string header = connection_id + "\n";
+			/*const std::string header = connection_id + "\n";
 
 			boost::scoped_array<char> data(new char[header.length() + length]);
 			std::memcpy(data.get(), header.data(), header.length());
-			std::memcpy(data.get() + header.length(), buffer, length);
+			std::memcpy(data.get() + header.length(), buffer, length);*/
+			std::string data = connection_id + "\n";
+			data += MUtils::Base64Helper::encode(buffer, length) + "\n\n";
 
 			{
 				boost::mutex::scoped_lock lock(m_SendMutex);
 
-				boost::asio::write(*m_Socket, boost::asio::buffer(data.get(), header.length() + length));
-
-				/*boost::asio::write(*m_Socket, boost::asio::buffer(header.c_str(), header.length()));
-				boost::asio::write(*m_Socket, boost::asio::buffer(buffer, length));*/
+				boost::asio::write(*m_Socket, boost::asio::buffer(data.c_str(), data.size()));
 
 				Log::shell(Log::Msg_Information) << "TcpBridgePitcher	data for [" << connection_id << "] sent.";
 
