@@ -228,7 +228,8 @@ namespace LanBridgeClient
 
 				{
 					char* end = std::find(data, data + length, '\n');
-					Log::shell(Log::Msg_Output) << "[" << connection_id << "]	request sent: " << length << " bytes: " << std::string(data, end - data);
+					// NOTE: some ascii code print may result in beep
+					Log::shell(Log::Msg_Output) << "[" << connection_id << "]	request sent: " << length << " bytes.";// << std::string(data, end - data);
 				}
 
 				if(g_LogRequests)
