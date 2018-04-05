@@ -1,12 +1,19 @@
 
 TODO:
+	proxy transfer
 	LanBridgeServer:
 		system commands
 			client restart callback at begin
 			discard session
 			password
 	LanBridgeMessenger: system command, password.
+	Transfer proxy issue
 
+
+
+2018.4.4	K.L.	<k.l.lambda@gmail.com>
+
+	+	Transfer.cpp: created.
 
 
 2017.10.12	K.L.	<k.l.lambda@gmail.com>
