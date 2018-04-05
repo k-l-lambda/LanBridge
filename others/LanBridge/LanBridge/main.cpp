@@ -16,6 +16,11 @@ namespace LanBridgeServer
 	int main(int argc, char* argv[]);
 }
 
+namespace Transfer
+{
+	int main(int argc, char* argv[]);
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -75,6 +80,10 @@ int main(int argc, char* argv[])
 
 			boost::thread t(boost::bind(LanBridgeClient::main, cargv.size(), &(cargv[0])));
 			return LanBridgeServer::main(5, sargv);
+		}
+		else if (usage == "transfer")
+		{
+			return Transfer::main(argc, argv);
 		}
 		else
 			throw std::runtime_error("unknown usage: " + usage);
