@@ -60,6 +60,12 @@ inline std::string getLine(const char* data, size_t length)
 	return std::string(data, linelen);
 }
 
+inline void outputDebugString(const std::string& message)
+{
+	OutputDebugStringA(message.c_str());
+	OutputDebugStringA("\n");
+}
+
 
 
 #endif // !defined(__COMMON_H__)

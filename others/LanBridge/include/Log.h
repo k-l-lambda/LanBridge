@@ -9,7 +9,7 @@
 #pragma warning(disable:4819)	// The file contains a character that cannot be represented in the current code page (number). Save the file in Unicode format to prevent data loss.
 #pragma warning(disable:6011)	// dereferencing NULL pointer <name>
 #pragma warning(disable:6334)	// sizeof operator applied to an expression with an operator may yield unexpected results
-#include <boost\shared_ptr.hpp>
+#include <boost\smart_ptr.hpp>
 #include <boost\function.hpp>
 #include <boost\tuple\tuple.hpp>
 #include <boost\thread\mutex.hpp>
@@ -22,6 +22,10 @@
 
 #pragma warning(push)
 #pragma warning(disable:4251)	// 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
+
+
+//__declspec(dllimport) void __stdcall OutputDebugStringA(const char* lpOutputString);
+void outputDebugString(const std::string& message);
 
 
 namespace LogDetail
@@ -87,7 +91,7 @@ public:
 
 private:
 	class Shell
-		: public boost::noncopyable
+		//: public boost::noncopyable
 	{
 	public:
 		explicit Shell(LogMessageLevel level)
@@ -174,6 +178,7 @@ public:
 		if(m_ConsoleMask & (1 << level))
 		{
 			std::clog << time << ' ' << s_LogMessageLevelSign[level] << '\t' << message << std::endl;
+			outputDebugString(message);
 		}
 
 		for(std::vector<MessageListener>::iterator it = m_Listeners.begin(); it != m_Listeners.end(); ++ it)

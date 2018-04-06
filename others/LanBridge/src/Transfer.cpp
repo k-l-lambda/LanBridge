@@ -72,16 +72,47 @@ namespace Transfer
 	}
 
 
+	static const size_t max_length = 0x20000;
+
+
+	void session_input(socket_ptr in_sock, socket_ptr out_sock)
+	{
+		while (in_sock->is_open())
+		{
+			char reply[max_length];
+			boost::system::error_code error;
+
+			size_t reply_length = out_sock->read_some(boost::asio::buffer(reply, max_length), error);
+			if (error == boost::asio::error::eof || reply_length == 0)
+			{
+				if (error == boost::asio::error::eof)
+					Log::shell(Log::Msg_Clew) << "EOF.";
+				else if (reply_length == 0)
+					Log::shell(Log::Msg_Clew) << "0 byte replied.";
+
+				break;
+			}
+
+			if (reply_length)
+				boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
+
+			Log::shell(Log::Msg_Input) << "received: " << reply_length << " bytes.";
+		}
+
+		if (out_sock->is_open())
+			out_sock->close();
+	}
+
+
 	void session(socket_ptr in_sock, socket_ptr out_sock)
 	{
 		try
 		{
+			boost::scoped_ptr<boost::thread> inputThread;
 			std::string head;
 
-			while (in_sock->is_open())
+			while (out_sock->is_open())
 			{
-				static const size_t max_length = 0x20000;
-
 				char data[max_length];
 				boost::system::error_code error;
 				size_t length = in_sock->read_some(boost::asio::buffer(data, max_length), error);
@@ -100,6 +131,10 @@ namespace Transfer
 
 				if (length)
 					boost::asio::write(*out_sock, boost::asio::buffer(data, length));
+				else {
+					in_sock->close();
+					break;
+				}
 
 				{
 					//char* end = std::find(data, data + length, '\n');
@@ -107,28 +142,39 @@ namespace Transfer
 				}
 
 
-				char reply[max_length];
-				size_t reply_length = out_sock->read_some(boost::asio::buffer(reply, max_length), error);
-				if (error == boost::asio::error::eof)
+				/*char reply[max_length];
+				for (;;)
 				{
-					if (error == boost::asio::error::eof)
-						Log::shell(Log::Msg_Clew) << "EOF.";
-					//else if (reply_length == 0)
-					//	Log::shell(Log::Msg_Clew) << "0 byte replied.";
+					size_t reply_length = out_sock->read_some(boost::asio::buffer(reply, max_length), error);
+					if (error == boost::asio::error::eof || reply_length == 0)
+					{
+						if (error == boost::asio::error::eof)
+							Log::shell(Log::Msg_Clew) << "EOF.";
+						else if (reply_length == 0)
+							Log::shell(Log::Msg_Clew) << "0 byte replied.";
 
-					break;
+						break;
+					}
+
+					if (reply_length)
+						boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
+
+					Log::shell(Log::Msg_Input) << "received: " << reply_length << " bytes.";
 				}
 
-				if (reply_length)
-					boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
+				break;*/
 
-				Log::shell(Log::Msg_Input) << "received: " << reply_length << " bytes.";
+				if (!inputThread)
+					inputThread.reset(new boost::thread(boost::bind(&session_input, in_sock, out_sock)));
 			}
 
 			if (in_sock->is_open())
 				in_sock->close();
 			if (out_sock->is_open())
 				out_sock->close();
+
+			if (inputThread)
+				inputThread->join();
 		}
 		catch (const std::exception& e)
 		{
@@ -142,6 +188,93 @@ namespace Transfer
 	}
 
 
+	void runInteraction(const short listen, const std::string host, const std::string port)
+	{
+		Log::shell(Log::Msg_SetUp) << "Interaction started.";
+
+		tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), listen));
+
+		socket_ptr in_sock, out_sock;
+
+		static const size_t max_length = 0x20000;
+		char buffer[max_length];
+		boost::system::error_code error;
+
+		for (;;)
+		{
+			try
+			{
+				char input;
+				std::cin >> input;
+
+				switch (input)
+				{
+				case 'a':
+					if (in_sock && in_sock->is_open())
+						in_sock->close();
+					if (out_sock && out_sock->is_open())
+						out_sock->close();
+
+					in_sock.reset(new tcp::socket(io_service));
+					a.accept(*in_sock);
+
+					out_sock = setupOutSock(host, port);
+
+					Log::shell(Log::Msg_Information) << "connection accepted from: " << in_sock->remote_endpoint().address();
+
+					break;
+				case 'o':
+					{
+						size_t length = in_sock->read_some(boost::asio::buffer(buffer, max_length), error);
+						if (error == boost::asio::error::eof)
+						{
+							Log::shell(Log::Msg_Clew) << "connection closed by peer.";
+							break;
+						}
+
+						if (length)
+							boost::asio::write(*out_sock, boost::asio::buffer(buffer, length));
+
+						{
+							Log::shell(Log::Msg_Output) << "sent: " << length << " bytes:";
+							Log::shell(Log::Msg_Output) << std::string(buffer, length);
+						}
+					}
+
+					break;
+				case 'i':
+					{
+						size_t length = out_sock->read_some(boost::asio::buffer(buffer, max_length), error);
+						if (error == boost::asio::error::eof || length == 0)
+						{
+							if (error == boost::asio::error::eof)
+								Log::shell(Log::Msg_Clew) << "EOF.";
+							else if (length == 0)
+								Log::shell(Log::Msg_Clew) << "0 byte replied.";
+
+							break;
+						}
+
+						if (length)
+							boost::asio::write(*in_sock, boost::asio::buffer(buffer, length));
+
+						Log::shell(Log::Msg_Input) << "received: " << length << " bytes:";
+						Log::shell(Log::Msg_Input) << std::string(buffer, length);
+					}
+
+					break;
+				default:
+					Log::shell(Log::Msg_Information) << "unexpected input:" << input;
+				}
+			}
+			catch (const std::exception& e)
+			{
+				Log::shell(Log::Msg_Warning) << "exception: " << e.what();
+			}
+		}
+	}
+
+
 	int main(int argc, char* argv[])
 	{
 		namespace po = boost::program_options;
@@ -151,6 +284,7 @@ namespace Transfer
 			("listen",			po::value<short>())
 			("host",			po::value<std::string>())
 			("port",			po::value<std::string>())
+			("interactive",		po::value<bool>()->implicit_value(true))
 			;
 
 		po::variables_map vm;
@@ -162,7 +296,11 @@ namespace Transfer
 		const std::string port = vm["port"].as<std::string>();
 
 
-
+		if (vm.count("interactive"))
+		{
+			runInteraction(listen, host, port);
+		}
+		else
 		{
 			Log::shell(Log::Msg_SetUp) << "transfer started at " << listen << ", pipe to " << host << ":" << port;
 
