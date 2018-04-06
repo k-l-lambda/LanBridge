@@ -22,6 +22,12 @@
 extern boost::asio::io_service io_service;
 
 
+namespace LanBridgeServer
+{
+	void doParseHost(const std::string& request, std::string& host, std::string& port);
+}
+
+
 namespace Transfer
 {
 	socket_ptr setupOutSock(const std::string& host, const std::string& port)
@@ -75,7 +81,7 @@ namespace Transfer
 	static const size_t max_length = 0x20000;
 
 
-	void session_input(socket_ptr in_sock, socket_ptr out_sock)
+	void session_input(const std::string& head, socket_ptr in_sock, socket_ptr out_sock)
 	{
 		while (in_sock->is_open())
 		{
@@ -96,7 +102,7 @@ namespace Transfer
 			if (reply_length)
 				boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
 
-			Log::shell(Log::Msg_Input) << "received: " << reply_length << " bytes.";
+			Log::shell(Log::Msg_Input) << "[" << head << "]" << "	received: " << reply_length << " bytes.";
 		}
 
 		if (out_sock->is_open())
@@ -110,6 +116,8 @@ namespace Transfer
 		{
 			boost::scoped_ptr<boost::thread> inputThread;
 			std::string head;
+
+			Log::shell(Log::Msg_SetUp) << "connection setup from: " << in_sock->remote_endpoint().address();
 
 			while (out_sock->is_open())
 			{
@@ -125,8 +133,22 @@ namespace Transfer
 
 				if (head.empty())
 				{
-					head = std::string(data, length);
-					Log::shell(Log::Msg_Output) << head;
+					const std::string text = std::string(data, length);
+
+					try
+					{
+						std::string host, port;
+						LanBridgeServer::doParseHost(text, host, port);
+
+						head = host;
+					}
+					catch (const std::exception&)
+					{
+						Log::shell(Log::Msg_Clew) << "invalid head: " << text;
+						head = "UNKNOWN";
+					}
+
+					//Log::shell(Log::Msg_Output) << head;
 				}
 
 				if (length)
@@ -138,40 +160,15 @@ namespace Transfer
 
 				{
 					//char* end = std::find(data, data + length, '\n');
-					Log::shell(Log::Msg_Output) << "request sent: " << length << " bytes.";
+					Log::shell(Log::Msg_Output) << "[" << head << "]" << "	sent: " << length << " bytes.";
 				}
-
-
-				/*char reply[max_length];
-				for (;;)
-				{
-					size_t reply_length = out_sock->read_some(boost::asio::buffer(reply, max_length), error);
-					if (error == boost::asio::error::eof || reply_length == 0)
-					{
-						if (error == boost::asio::error::eof)
-							Log::shell(Log::Msg_Clew) << "EOF.";
-						else if (reply_length == 0)
-							Log::shell(Log::Msg_Clew) << "0 byte replied.";
-
-						break;
-					}
-
-					if (reply_length)
-						boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
-
-					Log::shell(Log::Msg_Input) << "received: " << reply_length << " bytes.";
-				}
-
-				break;*/
 
 				if (!inputThread)
-					inputThread.reset(new boost::thread(boost::bind(&session_input, in_sock, out_sock)));
+					inputThread.reset(new boost::thread(boost::bind(&session_input, head, in_sock, out_sock)));
 			}
 
 			if (in_sock->is_open())
 				in_sock->close();
-			if (out_sock->is_open())
-				out_sock->close();
 
 			if (inputThread)
 				inputThread->join();

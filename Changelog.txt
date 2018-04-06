@@ -7,10 +7,13 @@ TODO:
 			discard session
 			password
 	LanBridgeMessenger: system command, password.
+	console output block issue
 
 
 
 2018.4.6	K.L.	<k.l.lambda@gmail.com>
+
+	+	Transfer: host parse added.
 
 	+	Transfer: input thread added.
 
