@@ -78,17 +78,19 @@ namespace Transfer
 	}
 
 
-	static const size_t max_length = 0x20000;
+	static const size_t MAX_LENGTH = 0x20000;
+	static boost::mutex s_InMutex;
+	static boost::mutex s_OutMutex;
 
 
 	void session_input(const std::string& head, socket_ptr in_sock, socket_ptr out_sock)
 	{
 		while (in_sock->is_open())
 		{
-			char reply[max_length];
+			char reply[MAX_LENGTH];
 			boost::system::error_code error;
 
-			size_t reply_length = out_sock->read_some(boost::asio::buffer(reply, max_length), error);
+			size_t reply_length = out_sock->read_some(boost::asio::buffer(reply, MAX_LENGTH), error);
 			if (error == boost::asio::error::eof || reply_length == 0)
 			{
 				if (error == boost::asio::error::eof)
@@ -100,13 +102,22 @@ namespace Transfer
 			}
 
 			if (reply_length)
-				boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
+			{
+				boost::mutex::scoped_lock lock(s_InMutex);
+
+				if (in_sock->is_open())
+					boost::asio::write(*in_sock, boost::asio::buffer(reply, reply_length));
+			}
 
 			Log::shell(Log::Msg_Input) << "[" << head << "]" << "	received: " << reply_length << " bytes.";
 		}
 
-		if (out_sock->is_open())
-			out_sock->close();
+		{
+			boost::mutex::scoped_lock lock(s_OutMutex);
+
+			if (out_sock->is_open())
+				out_sock->close();
+		}
 	}
 
 
@@ -121,9 +132,9 @@ namespace Transfer
 
 			while (out_sock->is_open())
 			{
-				char data[max_length];
+				char data[MAX_LENGTH];
 				boost::system::error_code error;
-				size_t length = in_sock->read_some(boost::asio::buffer(data, max_length), error);
+				size_t length = in_sock->read_some(boost::asio::buffer(data, MAX_LENGTH), error);
 				if (error == boost::asio::error::eof)
 				{
 					Log::shell(Log::Msg_Clew) << "connection closed by peer.";
@@ -144,7 +155,7 @@ namespace Transfer
 					}
 					catch (const std::exception&)
 					{
-						Log::shell(Log::Msg_Clew) << "invalid head: " << text;
+						//Log::shell(Log::Msg_Clew) << "invalid head: " << text;
 						head = "UNKNOWN";
 					}
 
@@ -152,8 +163,14 @@ namespace Transfer
 				}
 
 				if (length)
-					boost::asio::write(*out_sock, boost::asio::buffer(data, length));
-				else {
+				{
+					boost::mutex::scoped_lock lock(s_OutMutex);
+
+					if (out_sock->is_open())
+						boost::asio::write(*out_sock, boost::asio::buffer(data, length));
+				}
+				else
+				{
 					in_sock->close();
 					break;
 				}
@@ -167,8 +184,12 @@ namespace Transfer
 					inputThread.reset(new boost::thread(boost::bind(&session_input, head, in_sock, out_sock)));
 			}
 
-			if (in_sock->is_open())
-				in_sock->close();
+			{
+				boost::mutex::scoped_lock lock(s_InMutex);
+
+				if (in_sock->is_open())
+					in_sock->close();
+			}
 
 			if (inputThread)
 				inputThread->join();
@@ -193,8 +214,8 @@ namespace Transfer
 
 		socket_ptr in_sock, out_sock;
 
-		static const size_t max_length = 0x20000;
-		char buffer[max_length];
+		static const size_t MAX_LENGTH = 0x20000;
+		char buffer[MAX_LENGTH];
 		boost::system::error_code error;
 
 		for (;;)
@@ -222,7 +243,7 @@ namespace Transfer
 					break;
 				case 'o':
 					{
-						size_t length = in_sock->read_some(boost::asio::buffer(buffer, max_length), error);
+						size_t length = in_sock->read_some(boost::asio::buffer(buffer, MAX_LENGTH), error);
 						if (error == boost::asio::error::eof)
 						{
 							Log::shell(Log::Msg_Clew) << "connection closed by peer.";
@@ -241,7 +262,7 @@ namespace Transfer
 					break;
 				case 'i':
 					{
-						size_t length = out_sock->read_some(boost::asio::buffer(buffer, max_length), error);
+						size_t length = out_sock->read_some(boost::asio::buffer(buffer, MAX_LENGTH), error);
 						if (error == boost::asio::error::eof || length == 0)
 						{
 							if (error == boost::asio::error::eof)
