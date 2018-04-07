@@ -11,6 +11,11 @@ TODO:
 
 
 
+2018.4.7	K.L.	<k.l.lambda@gmail.com>
+
+	+	Transfer: added mutex for sock writing.
+
+
 2018.4.6	K.L.	<k.l.lambda@gmail.com>
 
 	+	Transfer: host parse added.
