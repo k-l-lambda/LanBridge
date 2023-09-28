@@ -5,6 +5,7 @@
 #include <string>
 #include <set>
 #include <iostream>
+#include <fstream>
 
 #pragma warning(push, 1)
 #include <boost/asio.hpp>

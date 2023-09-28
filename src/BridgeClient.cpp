@@ -218,11 +218,19 @@ namespace LanBridgeClient
 						sessionLog().close(connection_id);
 					}
 
-					if(inputthread.timed_join(boost::posix_time::seconds(0)))
+					inputthread.timed_join(boost::posix_time::seconds(0));
 						break;
 				}
 				else if(error)
 					throw boost::system::system_error(error); // Some other error.
+
+				if (!length)
+				{
+					Log::shell(Log::Msg_Clew) << "[" << connection_id << "]	zero data, connection closed.";
+
+					inputthread.timed_join(boost::posix_time::seconds(0));
+					break;
+				}
 
 				g_Bridge->write(connection_id, data, length);
 

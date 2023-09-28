@@ -113,7 +113,7 @@ namespace VideoBridge
 						SWP_SHOWWINDOW);
 			}
 
-			::SetWindowLong(m_hWnd, GWL_USERDATA, (::LONG)this);
+			//::SetWindowLong(m_hWnd, GWL_USERDATA, (::LONG)this);
 
 			m_hDc = ::GetDC(m_hWnd);
 			m_hBackDc = ::CreateCompatibleDC(NULL);
@@ -175,7 +175,7 @@ namespace VideoBridge
 
 		static LRESULT CALLBACK WndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 		{
-			RenderWindow* self = (RenderWindow*)::GetWindowLong(hWnd, GWL_USERDATA);
+			RenderWindow* self = nullptr;// (RenderWindow*)::GetWindowLong(hWnd, GWL_USERDATA);
 			if(self)
 				return self->proc(uMsg, wParam, lParam);
 

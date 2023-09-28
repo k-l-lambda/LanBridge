@@ -75,7 +75,7 @@ public:
 	{
 		for(;;)
 		{
-			m_Catcher->acceptConnection(boost::bind(&_l::accept, this, acceptor, _1));
+			m_Catcher->acceptConnection(boost::bind(&_l::accept, this, acceptor, boost::placeholders::_1));
 
 #pragma warning(suppress:4996)
 			_sleep(m_Interval);

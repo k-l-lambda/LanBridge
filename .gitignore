@@ -11,6 +11,13 @@
 *.user
 *.i
 
+*.FileListAbsolute.txt
+*.lib.recipe
+
 /runtime/
 /Release/
 /Debug/
+x64/
+
+node_modules/
+yarn.lock

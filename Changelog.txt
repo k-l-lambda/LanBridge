@@ -11,6 +11,13 @@ TODO:
 
 
 
+2023.9.28	K.L.	<k.l.lambda@gmail.com>
+
+	>	BridgeClient.cpp: fixed thread exit failure.
+
+	+	Upgraded to VC14.3.
+
+
 2018.4.7	K.L.	<k.l.lambda@gmail.com>
 
 	+	Transfer: added mutex for sock writing.
