@@ -1,0 +1,16 @@
+.svn/
+.vs/
+
+*.sdf
+*.lib
+*.pdb
+*.tlog
+*.obj
+*.log
+*.idb
+*.user
+*.i
+
+/runtime/
+/Release/
+/Debug/
